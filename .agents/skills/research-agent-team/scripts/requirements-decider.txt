@@ -1,0 +1,2 @@
+opendecider-client==0.8.1
+mcp==2.3.0

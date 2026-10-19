@@ -1,0 +1,189 @@
+{
+  "name": "acl_long",
+  "display_name": "ACL / ARR long paper (two-column, author-year, 8 pages) — OFFICIAL style files",
+  "official": true,
+  "provenance": "Official ACL style files acl.sty + acl_natbib.bst fetched verbatim from github.com/acl-org/acl-style-files (commit d5adc82, 2026-06-29), loaded with the 'review' option (anonymous, line numbers) for ARR submission. Long paper: max 8 pages of content in review, +1 page for camera-ready; references unlimited. The 'limitations' section is MANDATORY for ARR/*ACL and does not count toward the page limit; it must be rendered as an unnumbered \\section*{Limitations} after the conclusion, before the references. Re-check acl-style-files and the current CFP before submitting.",
+  "engine": {
+    "documentclass": "[11pt]{article}",
+    "style_package": "acl",
+    "is_class": false,
+    "assets": [
+      "acl.sty",
+      "acl_natbib.bst"
+    ],
+    "main_template": "main.tex.tmpl"
+  },
+  "sections": [
+    {
+      "id": "introduction",
+      "title": "Introduction",
+      "words": [
+        650,
+        1000
+      ],
+      "recipe": {
+        "min_cites": 8
+      }
+    },
+    {
+      "id": "related_work",
+      "title": "Related Work",
+      "words": [
+        400,
+        750
+      ],
+      "recipe": {
+        "closing_paragraph": true
+      }
+    },
+    {
+      "id": "method",
+      "title": "Method",
+      "words": [
+        1000,
+        1600
+      ],
+      "recipe": {
+        "require_notation_table": false,
+        "design_rationale": true
+      }
+    },
+    {
+      "id": "experiments",
+      "title": "Experimental Setup",
+      "words": [
+        600,
+        1000
+      ],
+      "recipe": {
+        "result_tables": [
+          "main_results",
+          "ablation_results"
+        ],
+        "display_math": false
+      }
+    },
+    {
+      "id": "analysis",
+      "title": "Results and Analysis",
+      "words": [
+        800,
+        1400
+      ],
+      "recipe": {
+        "require_failure_mode": true
+      }
+    },
+    {
+      "id": "conclusion",
+      "title": "Conclusion",
+      "words": [
+        120,
+        250
+      ],
+      "recipe": {
+        "paragraphs": 1,
+        "lists": false
+      }
+    },
+    {
+      "id": "limitations",
+      "title": "Limitations",
+      "words": [
+        0,
+        250
+      ],
+      "recipe": {
+        "lists": false
+      }
+    }
+  ],
+  "writing_order": [
+    "method",
+    "experiments",
+    "analysis",
+    "related_work",
+    "introduction",
+    "conclusion",
+    "limitations",
+    "abstract"
+  ],
+  "abstract": {
+    "words": [
+      150,
+      200
+    ],
+    "paragraphs": 1,
+    "cites": false,
+    "math": false,
+    "single_paragraph": true
+  },
+  "contributions": {
+    "count": 0
+  },
+  "title": {
+    "max_words": 18,
+    "max_chars": 160
+  },
+  "keywords": {
+    "min": 0,
+    "max": 0,
+    "cap": 0,
+    "lowercase": false
+  },
+  "citations": {
+    "style": "author_year",
+    "natbib_options": "round",
+    "bibstyle": "acl_natbib",
+    "floor": 30,
+    "types": [
+      "CORE",
+      "CONTEXT",
+      "BASELINE",
+      "METRIC",
+      "DEFINITION"
+    ],
+    "per_section_coverage": {
+      "related_work": [
+        12,
+        25
+      ],
+      "introduction": [
+        6,
+        12
+      ]
+    },
+    "in_abstract": false,
+    "in_headings": false,
+    "merge_adjacent": false
+  },
+  "tables": {
+    "caption_position": "above",
+    "min": 1
+  },
+  "experiment_complexity": "moderate",
+  "figures": {
+    "caption_position": "below",
+    "min": 2,
+    "distribute_across": [
+      "method",
+      "analysis"
+    ]
+  },
+  "headings": {
+    "case": "title",
+    "numbered": true
+  },
+  "masthead": {
+    "journal": "",
+    "homepage": "",
+    "band_rgb": null,
+    "copyright": "",
+    "doi_prefix": "",
+    "default_vol": "",
+    "default_issue": "",
+    "default_month": "",
+    "default_year": ""
+  },
+  "results_mode": "proposal"
+}

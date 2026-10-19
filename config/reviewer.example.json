@@ -1,0 +1,6 @@
+{
+  "backend": "codex",
+  "model": "a model your Codex CLI provider serves, from a different family than the executor",
+  "effort_deep": "high",
+  "effort_regular": "medium"
+}

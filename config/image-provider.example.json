@@ -1,0 +1,12 @@
+{
+  "provider": "openai_compatible",
+  "base_url": "https://your-provider.example/v1",
+  "api_key_env": "IMAGE_API_KEY",
+  "models": [
+    "your-approved-image-model"
+  ],
+  "download_hosts": [
+    "cdn.your-provider.example"
+  ],
+  "currency": "USD"
+}

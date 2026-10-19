@@ -1,0 +1,16 @@
+language: "en"
+# Set to the existing research topic's absolute directory when using --config.
+# No Obsidian application is required. Keep live configs outside this skill.
+vault_path: "/path/to/research-topic"
+
+benchmark_survey:
+  workspace_dir: "literature/benchmark-evidence"
+  papers_dir_name: "papers"
+  reports_dir_name: "reports"
+  survey_runs_dir_name: "surveys"
+  enable_collect_links: false
+
+# Optional arXiv supplement only. Main discovery uses the literature workflow.
+research_domains: {}
+# Do not exclude workshop/survey/review papers solely by a keyword in the abstract.
+excluded_keywords: []

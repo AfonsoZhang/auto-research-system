@@ -1,0 +1,7 @@
+[mcp_servers.research_clarification]
+command = "${RESEARCH_ROOT}/.venvs/clarification-decider/bin/python"
+args = ["${RESEARCH_ROOT}/.agents/skills/research-agent-team/scripts/clarification_decider.py"]
+cwd = "${RESEARCH_ROOT}"
+startup_timeout_sec = 20
+tool_timeout_sec = 150
+enabled_tools = ["choose_card"]
