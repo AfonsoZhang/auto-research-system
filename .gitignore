@@ -1,0 +1,6 @@
+# Local configuration and environments created by install.sh
+.tools/
+.venvs/
+.mcp.json
+__pycache__/
+*.pyc
