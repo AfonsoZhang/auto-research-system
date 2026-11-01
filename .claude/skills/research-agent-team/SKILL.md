@@ -117,9 +117,23 @@ same main agent makes the research-stage and execution decisions; roles receive
 bounded tasks rather than a separate mandate to run the research project.
 
 Identify dependencies before delegating independently deliverable work. Independent
-tasks may run in parallel. Handle tightly coupled, short critical-path tasks directly.
+tasks may run in parallel when the expected gain exceeds briefing and integration
+costs: separate literature searches, experiment batches under a fixed protocol,
+and independent audits are typical candidates. Keep tightly coupled serial work
+in the same working context by default, including question formulation, experiment
+design, interpretation and a manuscript's main argument. A stage or role change
+alone is not a reason to create a new session.
 After delegation, continue unassigned work without duplicating an agent's investigation
 or implementation.
+
+Choose a session boundary around work that benefits from retained context. Use
+short-lived subagents for bounded tasks; reuse an available worker session for
+long experiments or repeated debugging of the same branch. Start fresh when an
+independent assessment is required, the task changes materially, or context limits
+require a documented handoff. Role names do not imply permanently running sessions.
+Use available runtime tools; persistent cross-session scheduling is not a
+prerequisite for this workflow. Preserve the automatic-mode and standalone
+verification authorization rules above.
 
 | Role / agent name | Responsibility | Deliverable |
 |---|---|---|
@@ -196,6 +210,13 @@ Give each deliverable one owner. Parallel writers receive disjoint scopes; one o
 integrates shared files without overwriting other sessions' or contributors' changes.
 Reuse the project's plan or tracker. Add a compact record only when sustained
 collaboration needs one; do not create competing ledgers.
+
+Before dispatch, record the task's input versions, output paths and acceptance
+criteria. Require intermediate artifacts at meaningful checkpoints and before
+handoff, following [artifact and handoff requirements](references/full-flow.md#subagents-and-intermediate-artifacts).
+Briefs and replies point to saved evidence; chat-only completion reports do not
+release dependent work. Read and verify the relevant artifacts before integrating
+them or resuming after an interruption.
 
 Agents report questions to the main agent, which supplies context, coordinates or
 reassigns work. Repeated attempts without progress require a new diagnosis within

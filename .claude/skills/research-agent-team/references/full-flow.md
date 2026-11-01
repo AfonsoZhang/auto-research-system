@@ -83,6 +83,38 @@ versions, writable scope, output location and acceptance criteria. A subagent su
 artifacts; only verification by the main agent establishes acceptance. A scientific
 negative result can be an acceptable deliverable.
 
+For delegated work and work that will cross a context/session boundary, save the
+following in the existing tracker and native artifact locations. Link existing
+records rather than copying them into another mandatory document:
+
+- **Assignment:** goal, scope, owner, dependencies, input paths and identifiable
+  versions (commit, run/config ID or a snapshot/hash for mutable inputs), output
+  paths, acceptance criteria, budget and stopping conditions. Record before dispatch.
+- **Intermediate evidence:** code and configuration changes, raw results, logs,
+  source references and reproduction commands as applicable. Save at meaningful
+  milestones and before handoff or a planned interruption; do not wait until final
+  delivery. Retain failed attempts and incomplete outputs with their actual status.
+- **Decision record:** consequential choices, supporting evidence, alternatives
+  rejected and why, assumptions and unresolved questions. Record concise reasons
+  and provenance sufficient to resume the work; no internal reasoning transcript
+  is required.
+- **Handoff:** actual artifact paths and versions, checks performed and their
+  outcomes, verification gaps, remaining work and the next dependency. Distinguish
+  worker-reported completion from main-agent acceptance and scientific acceptance.
+
+Before continuing a handed-off task, read the assignment, handoff and relevant
+primary artifacts, and check that their versions agree. A summary locates evidence;
+it does not replace it. Independent reviewers receive the required primary inputs
+without executor-selected conclusions or inherited rankings, under the existing
+reviewer-independence and topic-context policies.
+
+The main agent releases dependent work only after the relevant acceptance checks.
+When an upstream input or protocol changes, mark affected downstream artifacts as
+needing revalidation and record the replacement version. Preserve prior results
+and valid independent work; do not mix results from incompatible versions or rerun
+unaffected tasks. Parallel writers retain disjoint ownership, and one designated
+owner integrates shared artifacts.
+
 After compaction or recovery, read recorded artifacts and unfinished stages before
 resuming. Do not reselect a topic from an abbreviated summary or mark unfinished
 stages complete. Changed upstream inputs require only affected downstream checks.
