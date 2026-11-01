@@ -63,6 +63,27 @@ values. A field named `completed` is not proof: corroborate with process/job out
 and expected outputs. Keep failures visible without forcing a missing metric to
 look like an ordinary zero or silently discarding it.
 
+For tabular run records, the bundled read-only helper checks planned-run coverage,
+duplicate run/attempt identities, status/reason fields and explicitly named numeric
+metrics. It accepts CSV, a JSON array or JSONL; use a temporary projection if the
+project's existing tracker has different field names, rather than replacing it.
+
+```bash
+python3 <experiment-bridge>/scripts/check_run_records.py \
+  --planned planned.csv --observed results.jsonl --metric accuracy
+```
+
+Replace `<experiment-bridge>` with this skill's actual directory. Planned rows use
+`run_id`; observed rows use `run_id`, `status`, optional `attempt_id`, `reason`,
+and metric columns. Statuses are `planned`, `pending`, `running`, `completed`,
+`failed`, `cancelled`, `excluded` or `skipped`; the last four require a reason.
+Multiple attempts need distinct attempt IDs. Failed attempts may lack metrics;
+completed attempts need finite values for each requested metric. The helper emits
+JSON and exits nonzero on inconsistent records. Pending/running/failed statuses
+remain visible even when records are consistent: passing is not a claim of run
+completion, artifact validity or scientific acceptance. The helper does not choose
+attempts, aggregate results or verify source files.
+
 ## Aggregation
 
 Group by the actual experimental condition: dataset version, split/subset, method,
