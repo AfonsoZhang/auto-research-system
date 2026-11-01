@@ -9,3 +9,4 @@ __pycache__/
 .agents/skills/
 .codex/config.toml
 .codex/generated-files.json
+TODO.md
