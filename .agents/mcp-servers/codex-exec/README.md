@@ -14,22 +14,17 @@ it, external review and built-in image generation are reported as unavailable.
 Requirements: `codex` on PATH and logged in (a version with `codex exec resume`);
 Python 3.9+; no packages.
 
-`install.sh` does not register this server. From the repository root, register it
-for this project only:
+`install.sh` (Claude host) registers it for this project by rendering
+`.mcp.json` from `.mcp.json.example`; an existing `.mcp.json` is left untouched.
+To register it by hand instead, run from the repository root:
 
 ```bash
 claude mcp add codex -s project -- python3 "$PWD/.agents/mcp-servers/codex-exec/server.py"
 ```
 
-or add the equivalent entry to `.mcp.json`:
-
-```json
-"codex": {
-  "type": "stdio",
-  "command": "python3",
-  "args": ["/absolute/path/to/this/repo/.agents/mcp-servers/codex-exec/server.py"]
-}
-```
+A project-level `codex` server takes precedence over one registered at user level
+under the same name. Claude Code asks you to approve project MCP servers the first
+time it loads them.
 
 Restart Claude Code; `claude mcp list` should show `codex … ✓ Connected`. The
 server key must be `codex`, because skills call `mcp__codex__*`. The Codex host
