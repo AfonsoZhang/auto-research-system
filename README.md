@@ -34,6 +34,16 @@ What it gives you:
 - **No vendor lock-in.** The image provider and external reviewer are chosen in
   local configuration. The main agent handles authorized decisions directly.
 
+**Built mainly for computer science research** (ML/NLP, systems, software
+engineering and similar empirical CS work): venue calibration, benchmarks,
+experiments and paper templates follow CS conventions. Other fields can use the
+skills, but expect to adjust them.
+
+**Recommended setup: Claude Code executes, Codex reviews.** Claude Code runs the
+research and writes the paper; Codex serves as the external cross-model reviewer,
+because in our use it is the stronger reviewer. The [Codex host](#codex-host)
+(Codex executes, Claude reviews) is supported but secondary.
+
 ---
 
 ## 🧭 What's inside
@@ -230,6 +240,7 @@ adapted from other projects keep their original notices; see
 
 ## Codex host
 
+This reverses the recommended setup above and is supported as an alternative.
 Run `bash install.sh --host codex`, then restart `codex` in this trusted project.
 Codex executes, writes and polishes by default; Claude provides external review.
 Split reviews use a Codex materials auditor and a Claude manuscript reviewer.
