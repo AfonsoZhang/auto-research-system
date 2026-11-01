@@ -29,6 +29,10 @@ echo "RESEARCH_ROOT=$ROOT"
 mkdir -p "$ROOT/.tools" "$ROOT/.venvs"
 "$PY" "$ROOT/scripts/retire_decider.py"
 
+# Let skills resolve the bundled literature and verification helpers.
+mkdir -p "$ROOT/.aris"
+[ -e "$ROOT/.aris/installed-skills.txt" ] || printf 'repo_root\t%s\n' "$ROOT/.agents/aris" > "$ROOT/.aris/installed-skills.txt"
+
 # Local config: copied once from the examples, then owned by the user.
 copy_once() { [ -e "$2" ] || { cp "$1" "$2"; echo "created $2 (edit it)"; }; }
 copy_once "$ROOT/config/image-provider.example.json" "$ROOT/.tools/image-provider.json"

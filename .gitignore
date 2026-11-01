@@ -2,6 +2,7 @@
 .tools/
 .venvs/
 .mcp.json
+.aris/
 __pycache__/
 *.pyc
 
