@@ -72,12 +72,13 @@ flowchart TD
     L --> D["3 · 会议、benchmark 与实验设计<br/>select-venue · benchmark-research-skill<br/>experiment-plan"]
     D --> P["4 · 实现与最小 pilot<br/>experiment-bridge · run-experiment"]
     P --> G{"pilot 关卡<br/>analyze-results"}
-    G -- "停止或重新设计" --> D
+    G -- 重新设计 --> D
+    G -- 停止 --> S(["科学停止<br/>报告结果与停止依据"])
     G -- 继续 --> M["5 · 主实验与分析<br/>run-experiment · analyze-results<br/>失败和缺失的实验照样保留"]
     M --> W["6 · 论证与写作<br/>good-story · ts-paper-plan · paper-writer<br/>nature-figure · ts-paper-cite"]
     W -. "发现证据缺口" .-> M
     W --> X["7 · 局限与声明草稿<br/>limitation-and-risk-writer · ai-use-drafter"]
-    X --> V["8 · 修订与核查<br/>诚信预检 → paper-claim-audit<br/>pre-submission-reviewer · paper-polish"]
+    X --> V["8 · 修订与核查<br/>paper-polish · pre-submission-reviewer<br/>nature-ref-verifier · 需要时 paper-claim-audit"]
     V -. "改证据，<br/>不改措辞" .-> M
     V --> F(["9 · 交付<br/>论文、复现材料、<br/>核查结果、遗留问题"])
     F --> O{"👤 投稿、发布、推送<br/>须经你授权"}

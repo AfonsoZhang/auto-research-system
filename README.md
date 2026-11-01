@@ -85,12 +85,13 @@ flowchart TD
     L --> D["3 · Venue, benchmark, design<br/>select-venue · benchmark-research-skill<br/>experiment-plan"]
     D --> P["4 · Implementation and minimum pilot<br/>experiment-bridge · run-experiment"]
     P --> G{"Pilot gate<br/>analyze-results"}
-    G -- "stop or redesign" --> D
+    G -- redesign --> D
+    G -- stop --> S(["Scientific stop<br/>report results and stopping grounds"])
     G -- continue --> M["5 · Main experiments and analysis<br/>run-experiment · analyze-results<br/>failed and missing runs kept"]
     M --> W["6 · Argument and writing<br/>good-story · ts-paper-plan · paper-writer<br/>nature-figure · ts-paper-cite"]
     W -. "evidence gap" .-> M
     W --> X["7 · Limitations and disclosure drafts<br/>limitation-and-risk-writer · ai-use-drafter"]
-    X --> V["8 · Revision and verification<br/>integrity pre-check → paper-claim-audit<br/>pre-submission-reviewer · paper-polish"]
+    X --> V["8 · Revision and verification<br/>paper-polish · pre-submission-reviewer<br/>nature-ref-verifier · paper-claim-audit when needed"]
     V -. "fix the evidence,<br/>not the wording" .-> M
     V --> F(["9 · Delivery<br/>manuscript, reproduction package,<br/>verification findings, open issues"])
     F --> O{"👤 Submit, publish, push<br/>only with your authorization"}
