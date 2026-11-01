@@ -4,7 +4,7 @@
 
 # Auto-Research System 🔨
 
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?style=flat)](LICENSE) · [![README 中文](https://img.shields.io/badge/README-中文-red?style=flat)](README_CN.md) · [![Skills](https://img.shields.io/badge/🧰_skills-39-7C3AED?style=flat)](#-whats-inside) · [![Integrity map](https://img.shields.io/badge/🛡️_integrity-families_A–H-2E7D32?style=flat)](.claude/skills/shared-references/integrity-patterns.md) · [![Runtime](https://img.shields.io/badge/runs_on-Claude_Code-blue?style=flat)](#-quickstart)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?style=flat)](LICENSE) · [![README 中文](https://img.shields.io/badge/README-中文-red?style=flat)](README_CN.md) · [![Skills](https://img.shields.io/badge/🧰_skills-37-7C3AED?style=flat)](#-whats-inside) · [![Integrity map](https://img.shields.io/badge/🛡️_integrity-families_A–H-2E7D32?style=flat)](.claude/skills/shared-references/integrity-patterns.md) · [![Runtime](https://img.shields.io/badge/runs_on-Claude_Code-blue?style=flat)](#-quickstart)
 
 <div align="center">
 
@@ -17,7 +17,7 @@
 > An end-to-end research system for Claude Code: from a research objective to
 > a selected topic, verified literature, a planned and piloted experiment, an
 > honest analysis and a submission-ready paper with figures, citations and a
-> reproduction package. 39 skills, one research controller, and human checkpoints
+> reproduction package. 37 skills, one research controller, and human checkpoints
 > where the decisions matter.
 
 What it gives you:
@@ -40,7 +40,7 @@ What it gives you:
 
 | | |
 |---|---|
-| **Skills** | 39 Claude Code skills in `.claude/skills/`. |
+| **Skills** | 37 Claude Code skills in `.claude/skills/`. |
 | **Shared research policies** | Claim preservation, contribution-type routing, target-venue calibration, topic selection, publication/version policy, research autonomy, abstract and conclusion rules, split review, and the [integrity pattern map](.claude/skills/shared-references/integrity-patterns.md). In `.claude/skills/shared-references/`. |
 | **Research controller** | `.claude/skills/research-agent-team/`: one main agent coordinates stages within the current request; automatic mode runs the full flow only when you turn it on. |
 | **Decision cards** | The main agent selects authorized options in automatic mode and records evidence, rationale and downstream effects in the existing task record. |
@@ -53,7 +53,7 @@ What it gives you:
 
 ## 📰 News
 
-- **2026-11-01** — 🚀 **v1.0.** 39 Claude Code skills and the research
+- **2026-11-01** — 🚀 **v1.0.** 37 Claude Code skills and the research
   controller; human checkpoints written into the routing rules; vendor-neutral
   image provider and external reviewer; an
   [integrity map](.claude/skills/shared-references/integrity-patterns.md) that
@@ -213,7 +213,7 @@ Invoke `$paper-polish` or `$research-review`; `$research-auto` explicitly enable
 automatic mode for the current task. `AGENTS.md` routes Codex, and
 `python3 scripts/build_codex.py` regenerates `.agents/skills/` from the Claude
 sources plus the [host contract](config/codex/host.md). Do not edit generated files.
-The source currently contains 37 loadable skills (the older badge says 39); the
+The source currently contains 37 loadable skills; the
 Codex view preserves all of them and adds the missing `research-auto` entrypoint.
 
 The read-only Claude bridge requires an authenticated Claude CLI with print JSON,

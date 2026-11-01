@@ -4,7 +4,7 @@
 
 # Auto-Research System 🔨（自动科研系统）
 
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?style=flat)](LICENSE) · [![README English](https://img.shields.io/badge/README-English-blue?style=flat)](README.md) · [![Skills](https://img.shields.io/badge/🧰_技能-39_个-7C3AED?style=flat)](#-里面有什么) · [![诚信对照表](https://img.shields.io/badge/🛡️_诚信对照-A–H_八族-2E7D32?style=flat)](.claude/skills/shared-references/integrity-patterns.md) · [![Runtime](https://img.shields.io/badge/运行于-Claude_Code-blue?style=flat)](#-快速开始)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg?style=flat)](LICENSE) · [![README English](https://img.shields.io/badge/README-English-blue?style=flat)](README.md) · [![Skills](https://img.shields.io/badge/🧰_技能-37_个-7C3AED?style=flat)](#-里面有什么) · [![诚信对照表](https://img.shields.io/badge/🛡️_诚信对照-A–H_八族-2E7D32?style=flat)](.claude/skills/shared-references/integrity-patterns.md) · [![Runtime](https://img.shields.io/badge/运行于-Claude_Code-blue?style=flat)](#-快速开始)
 
 <div align="center">
 
@@ -16,7 +16,7 @@
 
 > 一套跑在 Claude Code 上的端到端科研系统：从一个研究目标出发，到选定的题目、核实过的
 > 文献、设计好并跑过 pilot 的实验、诚实的分析，再到一篇带配图、引用和复现材料、可以投稿的
-> 论文。39 个技能、一个科研主控，在要紧的决定处设人工关口。
+> 论文。37 个技能、一个科研主控，在要紧的决定处设人工关口。
 
 它能给你什么：
 
@@ -34,7 +34,7 @@
 
 | | |
 |---|---|
-| **技能** | 39 个 Claude Code 技能，在 `.claude/skills/`。 |
+| **技能** | 37 个 Claude Code 技能，在 `.claude/skills/`。 |
 | **共享科研规则** | 结论保真、按贡献类型分流、目标会议校准、选题、发表/版本规则、科研自主边界、摘要与结论写法、拆分审查，以及[诚信对照表](.claude/skills/shared-references/integrity-patterns.md)。在 `.claude/skills/shared-references/` 下。 |
 | **科研主控** | `.claude/skills/research-agent-team/`：一个主 agent 在当前请求范围内协调各阶段；只有你明确开启时，自动模式才跑完整流程。 |
 | **决策卡** | 自动模式下主 agent 直接选择并执行已授权方案，在现有任务记录中留下依据、理由和后续影响。 |
@@ -47,7 +47,7 @@
 
 ## 📰 动态
 
-- **2026-11-01** — 🚀 **v1.0。** 39 个 Claude Code 技能和科研主控；人工关口写进路由规则；
+- **2026-11-01** — 🚀 **v1.0。** 37 个 Claude Code 技能和科研主控；人工关口写进路由规则；
   生图服务、外部评审不绑定厂商；[诚信对照表](.claude/skills/shared-references/integrity-patterns.md)
   把每类论文缺陷对应到负责预防它的阶段；`paper-claim-audit` 开头新增确定性预检（增量算术、
   摘要数字在表里找不到、GRIM、不可能的标准差、p 值与统计量矛盾、重复表格、残留模板串）。
@@ -185,7 +185,7 @@ codex
 `$research-review`；明确输入 `$research-auto` 才开启当前任务的自动模式。
 `AGENTS.md` 是 Codex 入口，`.agents/skills/` 是生成目录；更新原技能后运行
 `python3 scripts/build_codex.py`，不要直接编辑生成文件。原有 37 个可加载技能
-全部保留，另补齐 `research-auto` 入口（首页旧徽章的 39 与实际文件数不同）。
+全部保留，另补齐 `research-auto` 入口。
 
 Claude 审查需要已登录的 Claude CLI，并支持 `--print --output-format json`、
 `--effort`、`--tools` 和 `--strict-mcp-config` 等参数。配置写在
