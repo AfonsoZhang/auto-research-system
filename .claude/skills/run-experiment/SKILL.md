@@ -56,6 +56,60 @@ the authorized scope; this skill does not install or provision a scheduler.
 - For long jobs, use the available background-process mechanism and record its
   process/session/job ID. Do not block communication while a batch runs.
 
+### Local memory guard
+
+On a local machine, the experiment shares memory with the agent session, MCP
+servers and other processes. A job that exhausts memory can be OOM-killed (exit
+137), and a machine- or VM-wide OOM can take the agent session down with it.
+
+- **Know available memory first.** Before planning workers or caps, check total
+  and available RAM and swap (`free -h`; inside a VM or container, the VM or
+  cgroup limit, not the host's) and what other processes already use. Record the
+  figures; every later limit is derived from them.
+- **Estimate before launch.** Run the smoke check under `/usr/bin/time -v` and
+  read "Maximum resident set size"; scale by data size and worker count, and
+  compare the estimate with the available memory recorded above.
+- **Cap every heavy local job and detach it from the session.** On Linux with a
+  systemd user session, launch it as a transient user unit, so it dies alone on
+  overflow and keeps running if the agent session ends (survival after logout
+  needs `loginctl enable-linger`):
+  `systemd-run --user --unit=<project>-<step> -p MemoryMax=<cap> -p MemorySwapMax=<swap-cap> --collect <cmd>`
+  Set the cap below available memory, leaving headroom for the agent session and other processes. Status:
+  `systemctl --user status <unit>`; logs: `journalctl --user -u <unit>`; stop by
+  unit name. Use `--scope` only for short foreground checks. Without systemd,
+  use `prlimit --as=<bytes>` or `ulimit -v` with the platform's background
+  mechanism, and record which limit applied.
+- **Make jobs durable (state outside the process, idempotent tasks, bounded retries).**
+  - Required: write each item's result to its own file (or append one JSONL
+    line) as soon as it finishes; write to a temp name and rename, so a kill
+    never leaves a half-written result. On restart, skip items whose result
+    exists. Log failed items with the error. Judge progress by counting result
+    files.
+  - Optional ledger, only for large batches with many failures: item key →
+    failed/attempts/error, so known failures are not rerun blindly and retries
+    stay bounded.
+  - Item keys are deterministic (arm, dataset, query ID, seed). Cache paid LLM/API
+    responses by key so a rerun after a crash does not bill twice.
+  - Per-item timeout and a bounded retry with backoff for transient errors (API
+    429/5xx, network); a deterministic error fails the item once and is recorded,
+    not retried forever.
+  - Concurrency cap per resource (API calls, CPU workers) set in config, not
+    derived from core count.
+  - On SIGTERM/SIGINT flush finished results before exiting.
+  - Liveness is progress, not a live PID: check that the result-file count
+    grows; a running job with a flat count is stalled.
+  - Cache expensive encodings to disk keyed by model and input hash.
+- **Bound worker memory.** Fix the worker count from the measured per-worker peak,
+  not the core count; recycle workers (`maxtasksperchild` / `max_tasks_per_child`)
+  when per-task memory accumulates; stream or batch instead of holding all outputs
+  in RAM.
+- **Exit 137 or "Killed".** Confirm OOM with `journalctl --user -n 50` or
+  `dmesg | grep -i oom` (if permitted); record it as an implementation failure,
+  not a result. Apply the fixes above, then rerun only the missing items.
+- **When it still does not fit** (training, large-model eval): stop and propose a
+  remote GPU with a cost estimate; renting needs the user's approval. Changing
+  host or VM memory settings also needs the user.
+
 ## Monitor, retry and collect
 
 Record status as planned/running/completed/failed/cancelled as appropriate.
