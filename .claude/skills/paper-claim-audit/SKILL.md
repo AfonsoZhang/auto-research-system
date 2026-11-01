@@ -11,14 +11,6 @@ Apply the shared [working-language policy](../shared-references/research-autonom
 
 When applying audit findings to manuscript edits, the author-side step uses [claim-preservation.md](../shared-references/claim-preservation.md). Preserve this audit’s zero-context boundary: the auditor still sees only paper and raw-evidence files, not revision history, author narratives or prior verdicts. Its generic protocol below asks for a precise scope mismatch; cross-version contribution checks happen after the audit, within an authorized revision task.
 
-> 🔒 **Do not wrap this skill in `/loop`, `/schedule`, or `CronCreate`.** It is
-> verdict-bearing — it judges paper-to-evidence fidelity with a deliberately
-> zero-context fresh reviewer. Re-firing that verdict on a wall-clock timer adds
-> no new signal (it changes only when the *paper or results* change). Schedule
-> the *external wait that precedes it* — paper draft ready → then audit
-> **once**. See
-> [`shared-references/external-cadence.md`](../shared-references/external-cadence.md).
-
 Verify that every claim in the paper matches raw evidence for: **$ARGUMENTS**
 
 ## Why This Exists
@@ -35,8 +27,7 @@ A **fresh reviewer with zero prior context** catches these because it has no exp
 
 | Skill | Question it answers |
 |-------|-------------------|
-| `/experiment-audit` | Is the experiment code honest? (fake GT, normalization fraud) |
-| `/result-to-claim` | Does the data scientifically support this claim? |
+| `analyze-results` | What does the data scientifically support? |
 | **`/paper-claim-audit`** | **Does the paper report the data truthfully and precisely?** |
 
 ## Core Principle
@@ -224,7 +215,7 @@ Parse the reviewer's response and write `PAPER_CLAIM_AUDIT.md`:
 # Paper Claim Audit Report
 
 **Date**: [today]
-**Auditor**: the configured reviewer model ultra (fresh zero-context thread)
+**Auditor**: [actual reviewer model and effort] (fresh zero-context thread)
 **Paper**: [paper title from tex]
 
 ## Overall Verdict: [PASS | WARN | FAIL]
@@ -274,45 +265,22 @@ Also write `PAPER_CLAIM_AUDIT.json` for machine consumption.
 
 ## When to Run
 
-1. **After `/paper-write`** — first check before improvement loop
-2. **After `/auto-paper-improvement-loop`** — recheck if improvement loop changed numbers
+1. **After a draft with numbers is written** (e.g. by `paper-writer`)
+2. **After a revision that changed numbers, tables or claims**
 3. **Before submission** — final verification
 
-## Integration with Other Skills
-
-### Read by `/auto-paper-improvement-loop` (if exists)
-
-```
-if PAPER_CLAIM_AUDIT.json exists:
-    read mismatched claims
-    fix them as priority items in the improvement round
-```
-
+## Applying findings
 
 **Human in the loop: the user selects the fixes.** After delivering
 findings, stop. Apply manuscript edits only to the severity levels or item IDs
 the user names (e.g. "只改 major"); list the rest as open. Do not fold in minor
 fixes or extra narrowing on the side.
+
 ### Advisory, Never Blocking
 
-Same pattern as `/experiment-audit`:
 - `PASS` → continue normally
 - `WARN` → print warning, continue, flag draft as "check numbers before submission"
 - `FAIL` → print alert, continue, but do NOT mark as submission-ready
-
-## Render HTML view (auto, when `RENDER_HTML = true`, default)
-
-After writing `paper/PAPER_CLAIM_AUDIT.md` and `paper/PAPER_CLAIM_AUDIT.json`, invoke `/render-html` on the audit report so the user has a readable HTML view of the verdict + per-claim breakdown:
-
-```
-/render-html "paper/PAPER_CLAIM_AUDIT.md" --json "paper/PAPER_CLAIM_AUDIT.json"
-```
-
-Uses **full Codex review gate** (audit-class artifact — render-fidelity check matches the skill's existing zero-context cross-model audit invariant). Output lands at `paper/PAPER_CLAIM_AUDIT.html` with embedded source SHA256 and a `.review.json` sidecar carrying the render verdict.
-
-**Non-blocking**: if `/render-html` fails (helper missing, Codex MCP unavailable, file write error), log the failure and treat the skill as complete — the JSON + MD verdict files are the canonical outputs; the HTML view is a convenience for human readers.
-
-Skip if `RENDER_HTML = false` is set in the project's `CLAUDE.md` or passed as `— render html: false`.
 
 ## Key Rules
 
@@ -327,18 +295,17 @@ Skip if `RENDER_HTML = false` is set in the project's `CLAUDE.md` or passed as `
 
 ## Review Tracing
 
-After each `mcp__codex__codex` or `mcp__codex__codex-reply` reviewer call, save the trace following `shared-references/review-tracing.md` (Policy C — forensic; never silently skip). Use `save_trace.sh` (resolved per the chain in `shared-references/integration-contract.md` §2) or write files directly to `.aris/traces/<skill>/<date>_run<NN>/`. Respect the `--- trace:` parameter (default: `full`).
+After each `mcp__codex__codex` or `mcp__codex__codex-reply` reviewer call, save the trace following [review tracing](../shared-references/review-tracing.md); never silently skip. Use `save_trace.sh` or write files directly to `.aris/traces/<skill>/<date>_run<NN>/`. Respect the `--- trace:` parameter (default: `full`).
 
 ## Submission Artifact Emission
 
 This skill **always** writes `paper/PAPER_CLAIM_AUDIT.json`, regardless of
 caller or detector outcome. A detector-negative run (paper has no numeric
 claims) emits verdict `NOT_APPLICABLE`; a paper-with-numeric-claims-but-no-
-raw-results run emits `BLOCKED`. Silent skip is forbidden — `paper-writing`
-Phase 6 and `verify_paper_audits.sh` both rely on this artifact
-existing at a predictable path.
+raw-results run emits `BLOCKED`. Silent skip is forbidden: later revision and
+pre-submission checks read this artifact at a predictable path.
 
-The artifact conforms to the schema in `shared-references/assurance-contract.md`:
+Schema:
 
 ```json
 {
@@ -354,7 +321,7 @@ The artifact conforms to the schema in `shared-references/assurance-contract.md`
   "trace_path":       ".aris/traces/paper-claim-audit/<date>_run<NN>/",
   "thread_id":        "<codex mcp thread id>",
   "reviewer_model":   "<resolved — the model that actually ran (target: $REVIEWER_MODEL)>",
-  "reviewer_reasoning": "<resolved — the effort that actually ran (target: ultra)>",
+  "reviewer_reasoning": "<resolved — the effort that actually ran (target: the configured deep effort)>",
   "generated_at":     "<UTC ISO-8601>",
   "details": {
     "total_claims":   <int>,
@@ -370,16 +337,12 @@ Hash the **declared input set** passed into this audit invocation — i.e. the
 exact `.tex` files and raw result / config files this run read — not a
 repo-wide union and not the reviewer's self-reported subset. If a caller
 passed only `main.tex` + a single result file, hash those two files and no
-others. The external verifier rehashes these entries; any mismatch flags
-`STALE`.
+others. Rehashing these entries later shows whether the paper or results changed
+since the audit; a mismatch means the audit is stale and must be rerun.
 
-**Path convention** (must match what `verify_paper_audits.sh`
-expects): keys are **paths relative to the paper directory** (the arg
-passed to the verifier) for in-paper files — so `main.tex`, not
-`paper/main.tex` — and **absolute paths** for out-of-paper files such as
-external `results/` dirs. The verifier resolves relative entries via
-`os.path.join(paper_dir, key)`; prefixing with `paper/` produces
-`paper/paper/main.tex` and false-fails as STALE.
+**Path convention:** keys are paths relative to the paper directory for in-paper
+files (`main.tex`, not `paper/main.tex`) and absolute paths for files outside it,
+such as an external `results/` directory.
 
 ### Verdict decision table
 
@@ -403,7 +366,6 @@ thread preserves reviewer independence per
 ### Human-readable sibling
 
 `paper/PAPER_CLAIM_AUDIT.md` is written alongside the JSON for readers.
-The JSON is authoritative for `verify_paper_audits.sh`; the Markdown
-is for humans. The parent skill (`paper-writing` Phase 6) plus the verifier
-decide whether the verdict blocks finalization — this skill itself never
-blocks; it only emits.
+The JSON is the machine-readable record; the Markdown is for humans. This skill
+never blocks; the user or the controlling workflow decides what a verdict means
+for submission.

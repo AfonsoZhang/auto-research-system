@@ -74,10 +74,10 @@ Examples:
 | 2 | **Obsidian** (via MCP) | `obsidian` | Try calling any `mcp__obsidian-vault__*` tool — if unavailable, skip | Research notes, paper summaries, tagged references, wikilinks |
 | 3 | **Local PDFs** | `local` | `Glob: papers/**/*.pdf, literature/**/*.pdf` | Raw PDF content (first 3 pages) |
 | 4 | **Web search** | `web` | Always available (WebSearch) | arXiv, Semantic Scholar, Google Scholar |
-| 5 | **Semantic Scholar API** | `semantic-scholar` | `$S2_FETCHER` resolves (canonical name `semantic_scholar_fetch.py`, per integration-contract §2) | Published venue papers (IEEE, ACM, Springer) with structured metadata: citation counts, venue info, TLDR. **Included in default `all`; also selectable** via `— sources: semantic-scholar` or `— sources: web, semantic-scholar` |
-| 6 | **DeepXiv CLI** | `deepxiv` | `$DEEPXIV_FETCHER` resolves (canonical name `deepxiv_fetch.py`, per integration-contract §2) **and** `deepxiv` CLI present (`command -v deepxiv`) | Progressive paper retrieval: search, brief, head, section, trending, web search. **Only runs when explicitly requested** via `— sources: deepxiv` or `— sources: all, deepxiv` |
-| 7 | **Exa Search** | `exa` | `$EXA_FETCHER` resolves (canonical name `exa_search.py`, per integration-contract §2); fetcher handles `exa-py` SDK + API key internally | AI-powered broad web search with content extraction (highlights, text, summaries). Covers blogs, docs, news, companies, and research papers beyond arXiv/S2. **Included in default `all`; also selectable** via `— sources: exa` or `— sources: all, exa` |
-| 8 | **OpenAlex** | `openalex` | `$OPENALEX_FETCHER` resolves (canonical name `openalex_fetch.py`, per integration-contract §2) **and** Python `requests` module importable | Open citation graph with institutional affiliations, funding data, and comprehensive metadata across 250M+ works. Fully open API. **Included in default `all`; also selectable** via `— sources: openalex` or `— sources: all, openalex` |
+| 5 | **Semantic Scholar API** | `semantic-scholar` | `$S2_FETCHER` resolves (canonical name `semantic_scholar_fetch.py`) | Published venue papers (IEEE, ACM, Springer) with structured metadata: citation counts, venue info, TLDR. **Included in default `all`; also selectable** via `— sources: semantic-scholar` or `— sources: web, semantic-scholar` |
+| 6 | **DeepXiv CLI** | `deepxiv` | `$DEEPXIV_FETCHER` resolves (canonical name `deepxiv_fetch.py`) **and** `deepxiv` CLI present (`command -v deepxiv`) | Progressive paper retrieval: search, brief, head, section, trending, web search. **Only runs when explicitly requested** via `— sources: deepxiv` or `— sources: all, deepxiv` |
+| 7 | **Exa Search** | `exa` | `$EXA_FETCHER` resolves (canonical name `exa_search.py`); fetcher handles `exa-py` SDK + API key internally | AI-powered broad web search with content extraction (highlights, text, summaries). Covers blogs, docs, news, companies, and research papers beyond arXiv/S2. **Included in default `all`; also selectable** via `— sources: exa` or `— sources: all, exa` |
+| 8 | **OpenAlex** | `openalex` | `$OPENALEX_FETCHER` resolves (canonical name `openalex_fetch.py`) **and** Python `requests` module importable | Open citation graph with institutional affiliations, funding data, and comprehensive metadata across 250M+ works. Fully open API. **Included in default `all`; also selectable** via `— sources: openalex` or `— sources: all, openalex` |
 
 > **Graceful degradation**: If no MCP servers are configured, the skill works exactly as before (local PDFs + web search). Zotero and Obsidian are pure additions.
 
@@ -92,7 +92,7 @@ Try calling a Zotero MCP tool (e.g., search). If it succeeds:
 1. **Search by topic**: Use the Zotero search tool to find papers matching the research topic
 2. **Read collections**: Check if the user has a relevant collection/folder for this topic
 3. **Extract annotations**: For highly relevant papers, pull PDF highlights and notes — these represent what the user found important
-4. **Export BibTeX**: Get citation data for relevant papers (useful for `/paper-write` later)
+4. **Export BibTeX**: Get citation data for relevant papers (useful for `paper-writer` later)
 5. **Compile results**: For each relevant Zotero entry, extract:
    - Title, authors, year, venue
    - User's annotations/highlights (if any)
@@ -168,8 +168,7 @@ the Step-1 finalization block below — these are tracked separately
 because they don't emit `D2 contribution:` log lines from bash. Sources
 that were not requested via `— sources:` do not count. At the end of
 Step 1 (before "Optional PDF download"), if zero sources contributed,
-surface a D2 empty-aggregate error and stop. (See
-integration-contract.md §2 Policy D2 — the in-context tracking
+surface a D2 empty-aggregate error and stop. (The in-context tracking
 replaces a shared bash accumulator because SKILL bash blocks are
 executed as separate shells; state does not survive.)
 
@@ -178,7 +177,7 @@ source contributes to the multi-source aggregate; warn-and-continue
 on failure, never abort the whole aggregate):
 
 ```bash
-# Canonical strict-safe resolver (see shared-references/integration-contract.md §2).
+# Resolve the bundled helper (install.sh registers .agents/aris/tools in .aris/installed-skills.txt).
 cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)" || exit 1
 if [ -z "${ARIS_REPO:-}" ] && [ -f .aris/installed-skills.txt ]; then
     ARIS_REPO=$(awk -F'\t' '$1=="repo_root"{print $2; exit}' .aris/installed-skills.txt 2>/dev/null) || true
@@ -402,7 +401,7 @@ If `openalex_fetch.py` is not found or `requests` module is missing, skip this s
 - If OpenAlex and arXiv overlap, prefer the officially confirmed publication metadata and selected published/accepted version. Retain arXiv as an alias/alternate location. Never silently transfer source excerpts across versions.
 - OpenAlex's unique value: institutional affiliations, funding sources, comprehensive topic classification, and cross-discipline coverage
 
-**D2 aggregate finalization** (per integration-contract §2 Policy D2):
+**D2 aggregate finalization:**
 
 The orchestrator (you, the LLM) maintains an in-context list of
 contributing sources by reading the `D2 contribution: <name>` log
@@ -459,9 +458,8 @@ ARXIV_FETCHER=".aris/tools/arxiv_fetch.py"
 
 Before analysis, run pre-search verification on **all** candidate papers
 collected from Steps 0a-1 to filter out LLM-fabricated arXiv IDs / DOIs /
-titles. Helper: `verify_papers.py` (canonical name; resolved per
-[`shared-references/integration-contract.md`](../shared-references/integration-contract.md) §2,
-Policy D1 — primary helper with degraded-output fallback). If the
+titles. Helper: `verify_papers.py` (resolved by the same chain; Policy D1 —
+primary helper with degraded-output fallback). If the
 helper is unresolved on this machine, the SKILL emits a fallback
 `verified_papers.json` tagging every candidate `[UNVERIFIED]` so
 downstream analysis proceeds with audit-visible degraded output
@@ -481,9 +479,7 @@ VERIFY_PAPERS=".aris/tools/verify_papers.py"
 [ -f "$VERIFY_PAPERS" ] || { [ -n "${ARIS_REPO:-}" ] && VERIFY_PAPERS="$ARIS_REPO/tools/verify_papers.py"; }
 [ -f "$VERIFY_PAPERS" ] || VERIFY_PAPERS=""
 
-# 2. Emit candidates as JSON. Verification scratch lives under .aris/
-#    (NOT under research-wiki/ — Step 6's wiki ingest predicate is
-#    "research-wiki/ exists", and we must not trip it from Step 1.5).
+# 2. Emit candidates as JSON. Verification scratch lives under .aris/.
 mkdir -p .aris/verify-papers
 cat > .aris/verify-papers/candidate_papers.json <<'JSON'
 [
@@ -561,16 +557,11 @@ Apply the [publication/version policy](../shared-references/publication-policy.m
 
 ### Step 2: Analyze Each Paper
 
-> **Fan-out (Tier-aware).** Per-paper extraction is pure breadth — each paper
-> is independent — so it parallelizes cleanly. **Tier 1** (Workflow): spawn
-> one Claude subagent per paper (or per small batch) to extract the fields
-> below. **Tier 2** (Agent tool, no Workflow): the same per-paper subagents
-> via the Agent tool. **Tier 3**: iterate sequentially. This follows the
-> *extraction* shard schema from
-> [`shared-references/fan-out-pattern.md`](../shared-references/fan-out-pattern.md)
-> — `{shard_id: "<paper-or-batch id>", entries: [{dedup_key: "<canonical
-> arXiv-id / DOI / title-hash, already assigned upstream in Step 1.5>",
-> problem, method, results, relevance, source, verification_status}]}`.
+> **Parallel extraction (optional).** Papers are independent, so with many
+> candidates and sub-agents available, extraction may be split by paper or small
+> batch. Each part returns the fields below keyed by the stable record ID
+> (arXiv ID, DOI or title hash from Step 1.5); the main agent merges and
+> deduplicates. Otherwise, iterate sequentially.
 >
 > Step 1.5 verifies existence only; Step 1.6 selects versions and evidence tiers.
 > Extractors preserve both statuses and the stable record ID. Index/API success
@@ -626,81 +617,6 @@ The shared publication records are already persisted by Step 1.6 for cross-skill
 - Save paper PDFs to `literature/` or `papers/`
 - Update related work notes in project memory
 - If Obsidian is available, optionally create a literature review note in the vault
-
-> **Composed mode** — if invoked with `— composed: <canonical-report-path>` (an
-> orchestrator like `/idea-discovery` passes this), do **not** write a standalone
-> landscape `.md`. Return the structured table + narrative summary for the orchestrator
-> to fold into its canonical report as a "Literature Landscape" section; the report
-> links any saved PDFs/`references.bib`, it does not get a duplicate landscape file.
-> Step 6 (research-wiki ingest) still runs — the wiki is a separate persistent store,
-> not a duplicate of the report. **Default (no `— composed:` directive): behave exactly
-> as above — standalone, write files as documented.** Never infer composed mode from a
-> report file merely existing on disk. Full rules:
-> [`shared-references/output-composition.md`](../shared-references/output-composition.md).
-
-### Step 6: Update Research Wiki
-
-**Required when `research-wiki/` exists.** Skip entirely (no action, no
-error) if the directory is absent. Per
-[`shared-references/integration-contract.md`](../shared-references/integration-contract.md),
-this step follows the canonical ingest contract — business logic lives
-in `tools/research_wiki.py`, not in this prose.
-
-When `research-wiki/` exists, resolve `$WIKI_SCRIPT` per the canonical
-chain documented in
-[`shared-references/wiki-helper-resolution.md`](../shared-references/wiki-helper-resolution.md)
-(Variant B — warn-and-skip):
-
-```bash
-cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)" || exit 1
-ARIS_REPO="${ARIS_REPO:-$(awk -F'\t' '$1=="repo_root"{print $2; exit}' .aris/installed-skills.txt 2>/dev/null)}"
-if [ -z "${ARIS_REPO:-}" ] && [ -f "$HOME/.aris/repo" ]; then
-  ARIS_REPO=$(cat "$HOME/.aris/repo" 2>/dev/null) || true
-fi
-WIKI_SCRIPT=".aris/tools/research_wiki.py"
-[ -f "$WIKI_SCRIPT" ] || WIKI_SCRIPT="tools/research_wiki.py"
-[ -f "$WIKI_SCRIPT" ] || { [ -n "${ARIS_REPO:-}" ] && WIKI_SCRIPT="$ARIS_REPO/tools/research_wiki.py"; }
-[ -f "$WIKI_SCRIPT" ] || {
-  echo "WARN: research_wiki.py not found; literature synthesis will be reported but wiki ingest will be skipped. Fix: bash tools/install_aris.sh or smart_update.sh (refreshes ~/.aris/repo), export ARIS_REPO, or cp <ARIS-repo>/tools/research_wiki.py tools/." >&2
-  WIKI_SCRIPT=""
-}
-```
-
-```
-📋 Research Wiki ingest (runs once, at end of research-lit):
-   [ ] 1. Predicate: `research-wiki/` exists? If no, skip this step.
-   [ ] 2. If $WIKI_SCRIPT empty (helper unreachable), skip the rest of this step
-          (the warning above already explains why).
-   [ ] 3. For each of the top 8–12 relevant papers (arxiv IDs collected above):
-          python3 "$WIKI_SCRIPT" ingest_paper research-wiki/ \
-              --arxiv-id <id> [--thesis "<one-line>"] [--tags <t1>,<t2>]
-   [ ] 4. For each explicit relationship to an existing wiki entity,
-          add an edge:
-          python3 "$WIKI_SCRIPT" add_edge research-wiki/ \
-              --from "paper:<slug>" --to "<target_node_id>" \
-              --type <extends|contradicts|addresses_gap|inspired_by|...> \
-              --evidence "<one-sentence quote or reasoning>"
-   [ ] 5. Confirm papers/<slug>.md files were created (helper prints
-          "Paper ingested: ..."); if any failed with a network error,
-          retry or fall back to the --title/--authors/--year manual form.
-```
-
-`ingest_paper` handles slug generation, arXiv metadata fetch, dedup
-(skips an existing paper by arXiv id), page rendering, `index.md`
-rebuild, `query_pack.md` rebuild, and log append in a single call —
-**do not manually write `papers/<slug>.md`**. If the helper is
-unavailable (e.g., offline on a non-ARIS machine, or `$WIKI_SCRIPT`
-empty), log the gap and let `/research-wiki sync --arxiv-ids …`
-backfill later.
-
-For non-arXiv sources (Semantic Scholar only, IEEE/ACM journals without
-arXiv mirrors, blog posts), pass manual metadata instead:
-
-```bash
-python3 "$WIKI_SCRIPT" ingest_paper research-wiki/ \
-    --title "<full title>" --authors "A, B, C" --year <yyyy> \
-    --venue "<venue>" [--external-id-doi "<doi>"] [--thesis "..."]
-```
 
 ## Key Rules
 - Always include paper citations (authors, year, venue)

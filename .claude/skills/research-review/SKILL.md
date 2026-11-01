@@ -2,7 +2,7 @@
 name: research-review
 description: Get a deep critical review of research from an external reviewer backend (Codex or manual). Use when user says "review my research", "help me review", "get external review", or wants critical feedback on research ideas, papers, or experimental results.
 argument-hint: "[topic-or-scope]"
-allowed-tools: Bash(*), Read, Grep, Glob, Write, Edit, mcp__codex__codex, mcp__codex__codex-reply, mcp__manual_review__review, mcp__manual_review__review_reply
+allowed-tools: Bash(*), Read, Grep, Glob, Write, Edit, mcp__codex__codex, mcp__codex__codex-reply
 ---
 
 # Research Review via External Reviewer Backend (deep reasoning)
@@ -13,20 +13,12 @@ For structure or evidence requirements, use [paper-type-routing.md](../shared-re
 
 Include the [claim-preservation policy](../shared-references/claim-preservation.md) in substantive review briefs (readable path or text). For requested revision rounds, retain the reference/current claim, evidence-linked corrections and resolved/open concerns in the existing brief. Review remains optional and user-requested; this integration does not start a model call or an automatic revision loop.
 
-> 🔒 **Do not wrap this skill in `/loop`, `/schedule`, or `CronCreate`.** It is
-> verdict-bearing — it produces a cross-model review verdict, multi-round with
-> reviewer thread continuity. An external timer re-fires the verdict on
-> wall-clock time and breaks the reviewer's round-to-round memory: zero new
-> signal, full token cost. Schedule the *external wait that precedes it* (work
-> ready → then review once), not the verdict. See
-> [`shared-references/external-cadence.md`](../shared-references/external-cadence.md).
-
 Get a multi-round critical review of research work from the selected external reviewer backend with maximum reasoning depth.
 
 ## Constants
 
 - REVIEWER_MODEL — the configured reviewer model (see [reviewer configuration](../shared-references/reviewer-routing.md#local-configuration-overrides-the-upstream-defaults-below)), at the configured deep-audit effort. Any model the selected backend can serve; it should come from a different family than the executor (OpenAI, Anthropic, Google, DeepSeek, Moonshot/Kimi, Qwen, …).
-- **REVIEWER_BACKEND** — the configured backend; upstream default is Codex MCP. Override with `— reviewer: oracle-pro` for Oracle MCP, or `— reviewer: manual` for Manual Review MCP. If manual-review MCP is unavailable, stop and print the install command; do not fall back to Codex. See `shared-references/reviewer-routing.md`.
+- **REVIEWER_BACKEND** — the configured backend: `codex` (default) or `manual`; override per call with `— reviewer: codex|manual`. See [reviewer routing](../shared-references/reviewer-routing.md).
 
 ## Reviewer Calling Convention
 
@@ -37,20 +29,11 @@ When calling the reviewer, branch on REVIEWER_BACKEND:
   Use `mcp__codex__codex-reply` for follow-up rounds (reuse threadId).
 
 **If REVIEWER_BACKEND = `manual`:**
-  Use `mcp__manual_review__review` for new review threads with:
-    prompt: [exact same prompt that would go to Codex]
-    config: {"model_reasoning_effort": "xhigh", "executor_model": "<actual executor model>", "require_reviewer_model": true}
-  Save the returned `threadId`.
-  Use `mcp__manual_review__review_reply` for follow-up rounds with:
-    threadId: [saved manual-review threadId]
-    prompt: [follow-up prompt]
-    config: {"model_reasoning_effort": "xhigh", "executor_model": "<actual executor model>", "require_reviewer_model": true}
-
-Content fidelity: the manual reviewer should see the same substantive review
-brief Codex would read. If the manual UI supports file upload / attachment,
-reuse the same brief file; otherwise paste the brief contents inline because
-remote web UIs cannot read your local filesystem paths. Review tracing applies
-equally to both backends.
+  Follow the [manual backend](../shared-references/reviewer-routing.md#manual-backend):
+  write the same brief Codex would receive to a prompt file, ask the user to run it
+  in a model from a different family, and wait for the pasted reply beginning with
+  `Reviewer-Model: <exact-model-id>`. Follow-up rounds continue in the same model
+  conversation. Review tracing applies equally to both backends.
 
 ## Context: $ARGUMENTS
 
@@ -58,7 +41,7 @@ equally to both backends.
 
 - **Codex MCP Server** configured in Claude Code:
   ```bash
-  claude mcp add codex -s user -- python3 "$HOME/aris_repo/mcp-servers/codex-exec/server.py"   # your ARIS clone's path
+  claude mcp add codex -s project -- python3 "$PWD/.agents/mcp-servers/codex-exec/server.py"   # from the repository root; install.sh does this via .mcp.json
   ```
 - This gives Claude Code access to `mcp__codex__codex` and `mcp__codex__codex-reply` tools
 
@@ -124,14 +107,13 @@ The review brief should contain the full research context, the specific
 questions, and the primary artifact / raw-result paths the reviewer should
 inspect.
 
-*For manual backend:* use `mcp__manual_review__review` with the same brief
-contents. If the manual-review UI supports attachments, attach
-`RESEARCH_REVIEW_REQUEST.md`; otherwise paste the brief inline. Save the
-returned `threadId`.
+*For manual backend:* give the user `RESEARCH_REVIEW_REQUEST.md` (with the
+artifacts attached or pasted inline) and the `Reviewer-Model` response-format line,
+then wait for the pasted reply.
 
 ### Step 3: Iterative Dialogue (Rounds 2-N)
 For `codex` backend: use `mcp__codex__codex-reply` with the returned `threadId`.
-For `manual` backend: use `mcp__manual_review__review_reply` with the same `threadId`.
+For `manual` backend: give the user the next round brief to continue in the same model conversation.
 Use the appropriate tool to continue the conversation. For Codex follow-up
 rounds, write an updated brief such as `RESEARCH_REVIEW_ROUND_2.md` and send
 only the path:
@@ -149,8 +131,7 @@ mcp__codex__codex-reply:
     with the justified reference claim and assess the remaining contribution.
 ```
 
-For manual follow-up rounds, attach that same updated brief if possible;
-otherwise paste it inline.
+For manual follow-up rounds, hand the user that same updated brief.
 
 For each round:
 1. **Respond** to criticisms with evidence/counterarguments
@@ -185,20 +166,10 @@ Save the full interaction and conclusions to a review document in the project ro
 
 Update project memory/notes with key review conclusions.
 
-> **Composed mode** — if invoked with `— composed: <canonical-report-path>` (an
-> orchestrator like `/idea-discovery` passes this), do **not** write a standalone review
-> `.md` in the project root. The raw conversation is already persisted to `.aris/traces/…`
-> (see *Review Tracing* below — that audit copy is kept in every mode); fold the review
-> *conclusions* (consensus, claims matrix, prioritized TODOs) into the orchestrator's
-> canonical report and cite the trace path there. **Default (no `— composed:` directive):
-> behave exactly as above — write the standalone review document.** Never infer composed
-> mode from a report file merely existing. Full rules:
-> [`shared-references/output-composition.md`](../shared-references/output-composition.md).
-
 ## Key Rules
 
-- ALWAYS pin `model: $REVIEWER_MODEL` + `config: {"model_reasoning_effort": "$REVIEWER_EFFORT_DEEP"}` for reviews (deep-audit tier; capability fallback per `reviewer-routing.md`, never below the configured regular effort)
-- That pin is the **Codex** backend's. For `manual`, use the identity-bearing config from the Reviewer Calling Convention above; `model`, `sandbox` and `cwd` are Codex-only
+- ALWAYS pin `model: $REVIEWER_MODEL` + `config: {"model_reasoning_effort": "$REVIEWER_EFFORT_DEEP"}` for reviews (deep-audit tier; failures handled per `reviewer-routing.md`)
+- That pin is the **Codex** backend's; for `manual`, the reply's `Reviewer-Model` line records identity
 - Put comprehensive context in the review brief. Codex can read local files
   when you pass an absolute path; manual reviewers usually cannot, so attach or
   paste the same brief there.
@@ -227,7 +198,7 @@ Update project memory/notes with key review conclusions.
 
 ## Review Tracing
 
-After each reviewer call (`mcp__codex__codex`, `mcp__codex__codex-reply`, `mcp__manual_review__review`, or `mcp__manual_review__review_reply`), save the trace following `shared-references/review-tracing.md` (Policy C — forensic; never silently skip). Use `save_trace.sh` (resolved per the chain in `shared-references/integration-contract.md` §2) or write files directly to `.aris/traces/<skill>/<date>_run<NN>/`. Respect the `--- trace:` parameter (default: `full`).
+After each reviewer call (`mcp__codex__codex`, `mcp__codex__codex-reply`, or a manual round), save the trace following [review tracing](../shared-references/review-tracing.md); never silently skip. Use `save_trace.sh` or write files directly to `.aris/traces/<skill>/<date>_run<NN>/`. Respect the `--- trace:` parameter (default: `full`).
   A verdict-bearing manual response MUST begin with
   `Reviewer-Model: <exact-model-id>` — pass the model THIS session is actually
   running as in `executor_model`. Missing, unknown, or same-family identity

@@ -11,7 +11,7 @@ This is an intentionally longer reference. It is not meant to replace the main w
 - or you need to clean and standardize a bibliography in a more disciplined way.
 
 > **Quick map**: pre-search filter → `Pre-Search Verification Protocol` (this
-> file); submission-time bibliography audit → `/citation-audit` (upstream ARIS file, not bundled);
+> file); bibliography metadata check → [`nature-ref-verifier`](../nature-ref-verifier/SKILL.md);
 > numerical-claim audit → [`/paper-claim-audit`](../paper-claim-audit/SKILL.md).
 
 ## Contents
@@ -106,13 +106,13 @@ Google Scholar is not the default verification backbone here. Do not treat “I 
 
 This is the **fast filter** that runs between Step 1 (SEARCH) and Step 2 (full
 VERIFY). It catches LLM-hallucinated references at search time — before
-fabricated arXiv IDs / DOIs / titles propagate into idea-creator, novelty-check,
+fabricated arXiv IDs / DOIs / titles propagate into novelty-check,
 landscape surveys, or downstream writing.
 
-The protocol is implemented by `verify_papers.py` (canonical name; helper
-path resolved per `integration-contract.md` §2, Policy D1). The script is
+The protocol is implemented by `verify_papers.py` (bundled in
+`.agents/aris/tools/`; Policy D1 = primary helper with degraded-output fallback). The script is
 called by `/research-lit` (Step 1.5, mandatory), and is referenced by
-`/idea-creator` and `/novelty-check` as a required filter on cited papers.
+`/novelty-check` as a required filter on cited papers.
 
 **Three-layer fallback:**
 
@@ -134,7 +134,7 @@ called by `/research-lit` (Step 1.5, mandatory), and is referenced by
   rate**
 - `error` — the input entry itself was malformed (no arXiv, no DOI, no title)
 
-**Top-level verdict** (aligns loosely with `assurance-contract.md`):
+**Top-level verdict:**
 
 - `PASS` — hallucination rate ≤ threshold (default 0.20) and no pending
 - `WARN` — hallucination rate > threshold or any pending
@@ -166,15 +166,15 @@ to reduce CrossRef rate-limit risk. Default is a placeholder
 prefers a real contact for higher polite-pool throughput.
 
 **When NOT to use this protocol.** This is search-time filtering, not
-submission-time auditing. It does not replace `/citation-audit` (which checks
-already-written `.bib` entries against DBLP/CrossRef metadata + cite-context)
+submission-time auditing. It does not replace `nature-ref-verifier` (which checks
+already-written reference entries against multiple metadata sources)
 or `/paper-claim-audit` (which verifies numerical claims against raw result
 files). Run pre-search verification on candidate lists; run the audit skills
 before submission.
 
-**Invocation contract** (callers — `/research-lit`, `/idea-creator`,
-`/novelty-check` — must follow). Resolve `$VERIFY_PAPERS` via the
-canonical chain in `integration-contract.md` §2, then invoke under
+**Invocation contract** (callers — `/research-lit` and
+`/novelty-check` — must follow). Resolve `$VERIFY_PAPERS` with the
+chain below, then invoke under
 the Policy D1 fallback. The full copy-safe snippet:
 
 ```bash

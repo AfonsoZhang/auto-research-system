@@ -117,8 +117,8 @@ of independent evidence, a distinct mechanism or another substantive contributio
 
 ## Verification and tracing
 
-Every candidate in the prior-work table uses `verify_papers.py` via the installed
-[helper resolution chain](../shared-references/integration-contract.md) §2. If the
+Every candidate in the prior-work table uses `verify_papers.py` resolved as in
+[citation discipline](../shared-references/citation-discipline.md). If the
 helper is unresolved or fails, retain entries as `[UNVERIFIED]` and describe the
 gap. This helper checks existence, not novelty, publication or claim validity.
 Never fabricate identifiers/titles. See the

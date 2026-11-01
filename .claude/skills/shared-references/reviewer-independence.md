@@ -64,15 +64,12 @@ mcp__codex__codex:
 
 ## When to apply
 
-This protocol applies to ALL cross-model review calls in ARIS:
-- `/research-review` — paper review
-- `/auto-review-loop` — iterative review
-- `/paper-plan` — outline review
-- `/paper-write` — section review
-- `/paper-figure` — figure quality review
-- `/rebuttal` — stress test
-- `/meta-optimize` — patch review
-- Any skill that sends artifacts to `mcp__codex__codex` or `mcp__codex__codex-reply`
+This protocol applies to every cross-model review call, including:
+- `research-review` — research and paper review
+- `paper-claim-audit` — zero-context number audit
+- the Codex half of a [split review](split-review.md)
+- any skill that sends artifacts to `mcp__codex__codex`, `mcp__codex__codex-reply`
+  or a manual reviewer
 
 ## Exception
 
