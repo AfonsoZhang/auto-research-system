@@ -33,6 +33,7 @@ import sys
 import threading
 import time
 import traceback
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -43,6 +44,9 @@ STATE_DIR = Path(os.environ.get("CODEX_EXEC_STATE_DIR", str(Path.home() / ".code
 THREADS_DIR = STATE_DIR / "threads"
 PROGRESS_INTERVAL_SEC = float(os.environ.get("CODEX_EXEC_PROGRESS_INTERVAL_SEC", "15"))
 DEBUG_LOG = os.environ.get("CODEX_EXEC_DEBUG_LOG", "")
+
+# thread ids become state file names: reject anything that could escape THREADS_DIR
+THREAD_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
 
 SANDBOX_MODES = ["read-only", "workspace-write", "danger-full-access"]
 
@@ -393,7 +397,7 @@ def handle_call(request: Dict[str, Any], inbox: "queue.Queue[Dict[str, Any]]",
         except ValueError as exc:
             return error_response(request_id, -32602, str(exc))
         outcome = run_codex(argv, prompt, request_id, progress_token, inbox, deferred)
-        if outcome.thread_id:
+        if outcome.thread_id and THREAD_ID_RE.match(outcome.thread_id):
             remember_thread(outcome.thread_id, {
                 "model": args.get("model"),
                 "config": args.get("config"),
@@ -406,6 +410,8 @@ def handle_call(request: Dict[str, Any], inbox: "queue.Queue[Dict[str, Any]]",
         thread_id = args.get("threadId") or args.get("conversationId")
         if not thread_id:
             return error_response(request_id, -32602, "threadId is required")
+        if not THREAD_ID_RE.match(str(thread_id)):
+            return error_response(request_id, -32602, "invalid threadId")
         remembered = recall_thread(thread_id)
         argv = build_argv(remembered, resume_thread=thread_id)
         outcome = run_codex(argv, prompt, request_id, progress_token, inbox, deferred,

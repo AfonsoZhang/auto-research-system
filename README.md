@@ -165,7 +165,7 @@ The system is built so that speed never comes from those shortcuts.
 - **One request, one scope.** A skill finishes the requested work and its
   necessary checks; a "next step" in a skill is not permission to continue.
 - **Automatic mode** runs the full flow only when you explicitly turn it on for
-  a task. The main agent directly selects and executes ordinary authorized
+  a task by typing `/research-auto [task and endpoint]`. The main agent directly selects and executes ordinary authorized
   choices, recording evidence and rationale. Topic approval and new authority
   remain with the user; independent external review is unchanged.
 
@@ -173,7 +173,8 @@ The system is built so that speed never comes from those shortcuts.
 
 ## ⚠️ Limits (read before trusting a run)
 
-- **Tested:** image adapters (13),
+- **Tested:** host adapters (Codex view, Claude reviewer bridge, decider
+  retirement; codex-exec reviewer bridge and `/research-auto`), image adapters (13),
   integrity pre-check (clean fixture plus 8 injected defects, and decimals
   without a leading zero),
   nature-response (7) and nature-shared (5) package checks. Most skills are
