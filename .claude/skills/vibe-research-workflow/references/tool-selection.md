@@ -131,7 +131,8 @@ for OpenAI and Anthropic endpoints. Options:
 
 - Proxy services (ensure OpenAI and Google requests are
   correctly forwarded; check latency).
-- An OpenAI-compatible endpoint provided by your lab or institution.
+- A local model server (Ollama, LM Studio) or an OpenAI-compatible relay service
+  of your choice, including one provided by your lab or institution.
 - Cursor Pro with proxy setup.
 - Local models for offline development when cloud is
   unavailable.

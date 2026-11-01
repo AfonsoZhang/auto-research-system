@@ -1,0 +1,7 @@
+{
+  "backend": "claude",
+  "model": "opus",
+  "effort_deep": "high",
+  "effort_regular": "medium",
+  "timeout_seconds": 600
+}

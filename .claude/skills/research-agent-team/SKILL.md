@@ -104,7 +104,7 @@ Use Markdown for explanations and handoffs, and the existing project schema or J
 machine-readable cards and state. Keep code, tables, figures, and manuscripts in their
 native formats. Do not create duplicate artifacts just to change the format. For decision
 cards based on visual evidence, the main agent supplies a concise English account of the
-relevant facts, uncertainty, and source references; OpenDecider receives text, not images.
+relevant facts, uncertainty, and source references, and inspects the original visual evidence.
 
 ## Main-agent responsibilities
 
@@ -204,8 +204,8 @@ the budget and stopping rules. Only the main agent arranges further delegation.
 ## Clarification cards and default decisions
 
 In on-demand mode, clarify only material missing information and continue work
-that does not depend on it. The timed defaults, OpenDecider selection and
-delegated decisions below apply only in explicitly activated automatic mode.
+that does not depend on it. Direct execution of delegated decisions below applies
+only in explicitly activated automatic mode.
 
 The main agent makes routine technical choices. Send clarification cards for real
 tradeoffs affecting direction, scope or cost. Investigate enough to make the options
@@ -217,8 +217,8 @@ defaults remain usable; new authority and final academic commitments stay with t
 
 Topic approval follows the
 [mandatory human checkpoint](../shared-references/topic-selection-policy.md#human-approval-after-topic-selection),
-not the timed/default card template below. It has no timeout, automatic default,
-OpenDecider selection or main-agent fallback. Mark it `decision_kind: "topic_approval"`
+not the ordinary card template below. It has no timeout, automatic default
+or main-agent substitute for approval. Mark it `decision_kind: "topic_approval"`
 and `delegated: false`; only an actual user reply can release dependent work.
 
 Use one decision per card, normally with 2–3 executable options and the recommendation
@@ -245,19 +245,15 @@ later reply steers work not yet executed. Topic approval always waits for an
 explicit reply: deliver the Chinese topic report and end the turn, or ask with
 AskUserQuestion after the report. Silence or a dismissed question is not approval.
 
-Automatic selection applies only to existing cards through the
-[clarification-card interface](references/clarification-decider.md)
-(`mcp__research_clarification__choose_card` in Claude Code). Send OpenDecider
-English context, user preferences/constraints and 2–3 authorized options. The main
-agent prepares the card, verifies authority, executes and records the decision. The
-model returns a choice and probabilities; it does not assign work, evaluate research
-or accept artifacts. Cards in automatic mode carry `execution_mode: "unattended_research"`;
-enabled model selections are automatically adopted only in that mode. Other modes
-retain advisory output for the main agent to assess. Probabilities are not option
-accuracy or publication success rates. If the model is unavailable, uncertain or
-violates card constraints, the main agent uses existing authority and the card's
-default, recording the source. A tool failure does not halt the whole workflow.
-Explicit user replies take precedence, and selection cannot supply missing authority.
+In automatic mode, the main agent directly selects and executes the recommended
+option within existing delegated authority. Follow the
+[decision-card policy](references/decision-cards.md): record the options, choice,
+evidence, rationale, authority and downstream effects in the existing task record.
+There is no separate decision model, MCP call, probability output or confidence
+threshold. When evidence is insufficient, prefer an authorized, bounded, reversible
+check that reduces uncertainty. A recommendation is not scientific evidence or
+independent acceptance. Explicit user replies take precedence; neither a default
+nor a recommendation supplies missing authority.
 
 Defaults cannot exceed explicit user limits or replace approval required by a tool.
 If a default needs unavailable access, resources or budget, finish independent

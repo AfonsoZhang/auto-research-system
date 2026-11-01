@@ -26,7 +26,7 @@
 - **先有证据，再有结论。**每个数字都能追到原始结果文件，每条引用都经过核实，结论只说到
   证据撑得住的强度。
 - **决定权在你。**选题批准、花钱、租算力、投稿和一切对外动作都等你点头。
-- **不绑定厂商。**决策模型、生图服务和外部评审都在本地配置里自选。
+- **不绑定厂商。**生图服务和外部评审在本地配置里自选；已授权的常规决策由主 agent 直接处理。
 
 ---
 
@@ -37,7 +37,7 @@
 | **技能** | 39 个 Claude Code 技能，在 `.claude/skills/`。 |
 | **共享科研规则** | 结论保真、按贡献类型分流、目标会议校准、选题、发表/版本规则、科研自主边界、摘要与结论写法、拆分审查，以及[诚信对照表](.claude/skills/shared-references/integrity-patterns.md)。在 `.claude/skills/shared-references/` 下。 |
 | **科研主控** | `.claude/skills/research-agent-team/`：一个主 agent 在当前请求范围内协调各阶段；只有你明确开启时，自动模式才跑完整流程。 |
-| **决策卡工具** | MCP `choose_card`（`research-agent-team/scripts/clarification_decider.py`），用于自动模式下的普通澄清卡。 |
+| **决策卡** | 自动模式下主 agent 直接选择并执行已授权方案，在现有任务记录中留下依据、理由和后续影响。 |
 | **专职 agent** | `.claude/agents/`（分析、架构、实现、质检、编辑、需求；头脑风暴、选题批评、策略）。 |
 | **文献工具** | arXiv、OpenAlex、Semantic Scholar、Exa（`.agents/aris/tools/`）。 |
 | **Codex 评审桥** | `.agents/mcp-servers/codex-exec/` 下的 MCP 服务，用于跨模型评审（可选，需要 Codex CLI）。 |
@@ -48,7 +48,7 @@
 ## 📰 动态
 
 - **2026-11-01** — 🚀 **v1.0。** 39 个 Claude Code 技能和科研主控；人工关口写进路由规则；
-  决策模型、生图服务、外部评审都不绑定厂商；[诚信对照表](.claude/skills/shared-references/integrity-patterns.md)
+  生图服务、外部评审不绑定厂商；[诚信对照表](.claude/skills/shared-references/integrity-patterns.md)
   把每类论文缺陷对应到负责预防它的阶段；`paper-claim-audit` 开头新增确定性预检（增量算术、
   摘要数字在表里找不到、GRIM、不可能的标准差、p 值与统计量矛盾、重复表格、残留模板串）。
 
@@ -96,7 +96,7 @@ claude
 ```
 
 `install.sh` 从 `config/*.example.json` 在 `.tools/` 下生成本地配置（不进版本库），
-渲染 `.mcp.json`，并安装决策卡客户端。不下载任何模型权重。
+生成对应宿主的 MCP 配置；Codex 安装会准备 Claude 外审桥依赖。无需独立决策模型。
 需要 Python 3.10+、生图需要 Node 18+，以及 Claude Code。Codex CLI 可选：外部评审和内置生图工具
 要靠它。
 
@@ -104,14 +104,13 @@ claude
 
 | 组件 | 文件 | 可选项 | 不配置时 |
 |---|---|---|---|
-| 自动模式的决策模型 | `.tools/clarification-decider/config.json` | 任何返回 `top_logprobs` 的 OpenAI 兼容服务（vLLM、LM Studio、Ollama、llama.cpp、托管网关），或按需运行的本地 GGUF | 由主 agent 在已有授权内决定 |
 | 生图 | `.tools/image-provider.json` | Codex 内置 `image_gen`（默认）或 Antigravity 内置 `generate_image`（Nano Banana，`"provider": "antigravity"`）；任何返回图片的 OpenAI 兼容对话端点；另有 Poe、OpenRouter 适配器 | 经 Codex 桥调用内置 `image_gen` 工具；Codex 或该工具不可用时如实报告无法生成 |
 | 外部评审 | `.tools/reviewer.json` | Codex MCP（服务商随你的 Codex CLI），或人工评审 | 如实报告外部评审不可用，绝不拿自评顶替 |
 | 语言润色（可选） | 无；只在你要求时使用 | 默认 Gemini 4 Argon，经会话中可用的 Gemini 工具调用（Antigravity `agy` MCP 或 Gemini CLI）；只改语言，每处改动审核后才采用 | 由 Claude 润色 |
 | 文献 API | 环境变量 | `EXA_API_KEY`、`SEMANTIC_SCHOLAR_API_KEY`、`OPENALEX_EMAIL` | 用免密钥来源，并报告覆盖缺口 |
 
 密钥一律从配置里指定的环境变量读取。手动运行辅助脚本时，把 `RESEARCH_ROOT` 设为仓库
-路径。决策模型必须先在你自己的卡片上验证过，才能设 `automatic_selection: true`。
+路径。自动模式的常规决策由主 agent 直接处理，无需单独配置决策模型。
 
 ---
 
@@ -143,17 +142,16 @@ claude
 
 - **一个请求，一个范围。** 技能做完被要求的工作和必要检查就停；技能里写的"下一步"不等于
   允许继续。
-- **自动模式**只有你为某个任务明确开启时才跑完整流程。届时普通澄清卡可以由配置的决策模型
-  或主 agent 决定。
+- **自动模式**只有你为某个任务明确开启时才跑完整流程。主 agent 直接推荐并执行已有授权内的常规选择，记录依据和理由。
+  选题批准和新增授权仍由你决定，独立外审保留。
 
 ---
 
 ## ⚠️ 局限（信任任何一次运行之前必读）
 
-- **已测试：**决策卡契约（14 项离线测试）、生图适配器（13 项）、诚信预检（干净样例加 8 种
+- **已测试：**生图适配器（13 项）、诚信预检（干净样例加 8 种
   注入缺陷，以及不带前导零的小数）、nature-response（7 项）和
   nature-shared（5 项）包检查。大多数技能是说明文件，没有自动化行为测试。
-- **决策模型**只在 12 张英文合成卡上检查过，只能说明接得通，不能说明它的科研决策准确。
 - **诚信预检基于正则抽取。**只能查到抽取器认出的内容，零发现不等于没问题。没装 scipy 时
   只复核 z 检验的 p 值。
 - **诚信对照表是预防，不是证明。**所有检查都过了不等于论文正确，审稿人仍可能查出问题。
@@ -171,3 +169,35 @@ AI-Research-SKILLs；诚信预检用了 Anti-Autoresearch 的 4 个 MIT 脚本�
 
 CC BY-NC-SA 4.0（[`LICENSE`](LICENSE)）：可在非商业目的下分享和改编，需署名并以相同许可证
 发布。改编自其他项目的组件保留原有声明，见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)。
+
+## Codex 版本
+
+保留 Claude 原版，同时提供 Codex 宿主适配。Codex 负责执行、写作和默认润色；
+外部审查交给 Claude。全面审查仍拆为材料审计与论文审查，分别由 Codex 子代理和
+Claude 执行。选题人工确认、证据要求、产物格式和流程阶段保持原样。
+
+```bash
+bash install.sh --host codex
+codex
+```
+
+在可信项目中重启 Codex，使项目 MCP 和技能生效。使用 `$paper-polish`、
+`$research-review`；明确输入 `$research-auto` 才开启当前任务的自动模式。
+`AGENTS.md` 是 Codex 入口，`.agents/skills/` 是生成目录；更新原技能后运行
+`python3 scripts/build_codex.py`，不要直接编辑生成文件。原有 37 个可加载技能
+全部保留，另补齐 `research-auto` 入口（首页旧徽章的 39 与实际文件数不同）。
+
+Claude 审查需要已登录的 Claude CLI，并支持 `--print --output-format json`、
+`--effort`、`--tools` 和 `--strict-mcp-config` 等参数。配置写在
+`.tools/reviewer-codex.json`，默认 `opus`，深审/常规 effort 为 `high`/`medium`；
+可用 `CLAUDE_REVIEW_MODEL`、`CLAUDE_REVIEW_EFFORT_DEEP`、
+`CLAUDE_REVIEW_EFFORT_REGULAR` 覆盖。Claude 原版仍使用 `.tools/reviewer.json`，
+两者互不覆盖。审查桥只开放读取工具，不开放命令执行、写入或嵌套 MCP。
+调用方声明的执行模型会如实标注，不能冒充宿主认证的独立性证据。
+
+安装保留已有本地配置，新增项目级 `.codex/config.toml` 的缺失 MCP 表，
+不修改用户级 Codex 配置。宿主接口差异集中在
+[Codex 适配约定](config/codex/host.md)；科研规则和辅助脚本仍取自原版。
+生图优先使用当前 Codex 会话的原生图像工具，不绕到审查器。
+
+适配验证：`python3 -m unittest discover -s tests -v`。

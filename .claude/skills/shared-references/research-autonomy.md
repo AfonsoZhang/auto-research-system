@@ -117,11 +117,11 @@ commitment:
   user's decision. Such a choice cannot replace the evidence needed for a claim.
 
 Present concrete options, a recommendation and their effects. Previously
-authorized card choices may use the established default/decision-model
-path in automatic mode, except the mandatory
+authorized card choices are selected and executed directly by the main agent
+in automatic mode, with evidence and rationale recorded, except the mandatory
 [post-selection human checkpoint](topic-selection-policy.md#human-approval-after-topic-selection).
 A new or replacement topic must be reported and explicitly approved before
-downstream work, including in automatic mode; the main agent and decision model
+downstream work, including in automatic mode; the main agent
 cannot approve it. A decision needing new authorization stays with the user; elapsed time
 cannot supply that authorization.
 

@@ -31,8 +31,8 @@ What it gives you:
   citation is verified; claims stay at the strength the evidence supports.
 - **You stay in charge.** Topic approval, spending, compute, submission and any
   outward-facing action wait for you.
-- **No vendor lock-in.** The decision model, image provider and external
-  reviewer are each chosen in local configuration.
+- **No vendor lock-in.** The image provider and external reviewer are chosen in
+  local configuration. The main agent handles authorized decisions directly.
 
 ---
 
@@ -43,7 +43,7 @@ What it gives you:
 | **Skills** | 39 Claude Code skills in `.claude/skills/`. |
 | **Shared research policies** | Claim preservation, contribution-type routing, target-venue calibration, topic selection, publication/version policy, research autonomy, abstract and conclusion rules, split review, and the [integrity pattern map](.claude/skills/shared-references/integrity-patterns.md). In `.claude/skills/shared-references/`. |
 | **Research controller** | `.claude/skills/research-agent-team/`: one main agent coordinates stages within the current request; automatic mode runs the full flow only when you turn it on. |
-| **Decision-card tool** | MCP `choose_card` (`research-agent-team/scripts/clarification_decider.py`) for ordinary clarification cards in automatic mode. |
+| **Decision cards** | The main agent selects authorized options in automatic mode and records evidence, rationale and downstream effects in the existing task record. |
 | **Specialist agents** | `.claude/agents/` (analyst, architect, implementer, QA, editor, requirements; brainstormer, idea critic, strategist). |
 | **Literature helpers** | arXiv, OpenAlex, Semantic Scholar, Exa (`.agents/aris/tools/`). |
 | **Codex reviewer bridge** | MCP server in `.agents/mcp-servers/codex-exec/` for cross-model review (optional; needs Codex CLI). |
@@ -55,7 +55,7 @@ What it gives you:
 
 - **2026-11-01** — 🚀 **v1.0.** 39 Claude Code skills and the research
   controller; human checkpoints written into the routing rules; vendor-neutral
-  decision model, image provider and external reviewer; an
+  image provider and external reviewer; an
   [integrity map](.claude/skills/shared-references/integrity-patterns.md) that
   ties each kind of paper defect to the stage that prevents it; a deterministic
   pre-check in `paper-claim-audit` (delta arithmetic, headline numbers missing
@@ -107,8 +107,8 @@ claude
 ```
 
 `install.sh` creates local, untracked configuration under `.tools/` from
-`config/*.example.json`, renders `.mcp.json`, and
-installs the decision-card client. It downloads no model weights. Requirements:
+`config/*.example.json` and renders host MCP configuration. Codex setup installs
+the Claude reviewer MCP dependencies; no separate decision model is required. Requirements:
 Python 3.10+, Node 18+ for image generation, and Claude Code. Codex CLI is
 optional: it provides the external reviewer and the built-in image tool.
 
@@ -116,7 +116,6 @@ optional: it provides the external reviewer and the built-in image tool.
 
 | Component | File | Choices | When unconfigured |
 |---|---|---|---|
-| Decision model for automatic-mode cards | `.tools/clarification-decider/config.json` | Any OpenAI-compatible server returning `top_logprobs` (vLLM, LM Studio, Ollama, llama.cpp, a hosted gateway), or a local GGUF run on demand | The main agent decides under its existing authorization |
 | Image generation | `.tools/image-provider.json` | Codex built-in `image_gen` (default) or Antigravity built-in `generate_image` (Nano Banana, `"provider": "antigravity"`); any OpenAI-compatible chat endpoint that returns images; adapters for Poe and OpenRouter | The built-in `image_gen` tool through the Codex bridge; if Codex or the tool is unavailable, generation is reported as unavailable |
 | External reviewer | `.tools/reviewer.json` | Codex MCP with whatever provider your Codex CLI uses, or a manual reviewer | External review is reported as unavailable, never replaced by self-review |
 | Language polish (optional) | none; used only when you ask | Gemini 4 Argon by default, through a Gemini tool exposed in the session (Antigravity `agy` MCP or Gemini CLI); language-only edits, each change reviewed before adoption | Polish stays with Claude |
@@ -124,8 +123,6 @@ optional: it provides the external reviewer and the built-in image tool.
 
 Keys are always read from environment variables named in the configuration.
 Set `RESEARCH_ROOT` to the repository path if you run helper scripts by hand.
-A decision model must be validated on your own cards before you set
-`automatic_selection: true`.
 
 ---
 
@@ -168,20 +165,19 @@ The system is built so that speed never comes from those shortcuts.
 - **One request, one scope.** A skill finishes the requested work and its
   necessary checks; a "next step" in a skill is not permission to continue.
 - **Automatic mode** runs the full flow only when you explicitly turn it on for
-  a task. Ordinary clarification cards may then be decided by the configured
-  decision model or the main agent.
+  a task. The main agent directly selects and executes ordinary authorized
+  choices, recording evidence and rationale. Topic approval and new authority
+  remain with the user; independent external review is unchanged.
 
 ---
 
 ## ⚠️ Limits (read before trusting a run)
 
-- **Tested:** decision-card contract (14 offline tests), image adapters (13),
+- **Tested:** image adapters (13),
   integrity pre-check (clean fixture plus 8 injected defects, and decimals
   without a leading zero),
   nature-response (7) and nature-shared (5) package checks. Most skills are
   instruction files without automated behavioural tests.
-- **The decision model** has been checked only on 12 synthetic English cards;
-  this shows the integration works, not that its research decisions are accurate.
 - **The integrity pre-check is regex-based.** It checks only what its extractor
   finds; zero findings is not a clean bill. Without scipy, only z-test p values
   are rechecked.
@@ -205,3 +201,29 @@ CC BY-NC-SA 4.0 ([`LICENSE`](LICENSE)): you may share and adapt this work for
 non-commercial purposes with attribution, under the same license. Components
 adapted from other projects keep their original notices; see
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
+## Codex host
+
+Run `bash install.sh --host codex`, then restart `codex` in this trusted project.
+Codex executes, writes and polishes by default; Claude provides external review.
+Split reviews use a Codex materials auditor and a Claude manuscript reviewer.
+Scientific policy, stages, topic approval and artifact formats are unchanged.
+
+Invoke `$paper-polish` or `$research-review`; `$research-auto` explicitly enables
+automatic mode for the current task. `AGENTS.md` routes Codex, and
+`python3 scripts/build_codex.py` regenerates `.agents/skills/` from the Claude
+sources plus the [host contract](config/codex/host.md). Do not edit generated files.
+The source currently contains 37 loadable skills (the older badge says 39); the
+Codex view preserves all of them and adds the missing `research-auto` entrypoint.
+
+The read-only Claude bridge requires an authenticated Claude CLI with print JSON,
+effort selection, tool restriction and strict MCP configuration support. Configure
+`.tools/reviewer-codex.json` (default `opus`, deep `high`, regular `medium`), or
+`CLAUDE_REVIEW_MODEL`, `CLAUDE_REVIEW_EFFORT_DEEP`, and
+`CLAUDE_REVIEW_EFFORT_REGULAR`. Claude-host `.tools/reviewer.json` is independent.
+Unknown identities, failures and timeouts never produce accepted verdicts; executor
+identity remains explicitly caller-declared rather than runtime-attested.
+
+Installation preserves local settings and only adds missing project MCP tables;
+it does not edit global Codex configuration. Native images use the current Codex
+image tool. Run adapter tests with `python3 -m unittest discover -s tests -v`.

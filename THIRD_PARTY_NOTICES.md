@@ -33,9 +33,9 @@ the idea of an exemplar knowledge base from joshzyj/open-scholar-skill; no text
 from that project is included.
 
 Not bundled: Python/Node dependencies (installed from their registries under
-their own licenses, e.g. opendecider-client and the MCP SDK), model weights, and
+their own licenses, e.g. the MCP SDK), model weights, and
 journal or conference templates other than those listed above. Check the license
-of any decision model or image model you configure.
+of any image model you configure.
 
 wanshuiyin/Anti-Autoresearch (45135aa), © 2026 Anti-Autoresearch contributors, MIT:
 `paper-claim-audit/scripts/integrity/` (build_claim_ledger, check_numeric_consistency,

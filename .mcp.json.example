@@ -1,9 +1,3 @@
 {
-  "mcpServers": {
-    "research_clarification": {
-      "type": "stdio",
-      "command": "${RESEARCH_ROOT}/.venvs/clarification-decider/bin/python",
-      "args": ["${RESEARCH_ROOT}/.claude/skills/research-agent-team/scripts/clarification_decider.py"]
-    }
-  }
+  "mcpServers": {}
 }

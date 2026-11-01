@@ -4,3 +4,8 @@
 .mcp.json
 __pycache__/
 *.pyc
+
+# Regenerable Codex view and machine-local MCP paths
+.agents/skills/
+.codex/config.toml
+.codex/generated-files.json

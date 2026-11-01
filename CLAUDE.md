@@ -21,7 +21,7 @@
 - **Human checkpoint after topic selection.** After fresh selection or reselection,
   follow the [topic-approval rule](.claude/skills/shared-references/topic-selection-policy.md#human-approval-after-topic-selection)
   and wait for the user's explicit decision. Automatic mode, timed defaults and decision
-  models cannot supply approval.
+  recommendations cannot supply approval.
 - **Child projects retain their existing workflow.** Ordinary child-project sessions do
   not inherit root team execution. A root task already in automatic mode may delegate
   scoped work there without changing the child's default workflow.
