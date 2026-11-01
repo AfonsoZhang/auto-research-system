@@ -161,9 +161,36 @@ claude
 
 ## 🧬 致谢
 
-多个技能改编自开源项目，包括 ARIS、Supervisor-Skills、nature-skills、research-companion 和
-AI-Research-SKILLs；诚信预检用了 Anti-Autoresearch 的 4 个 MIT 脚本，做了少量修改。各组件
-保留原有声明，完整清单（版本与许可证）见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)。
+本项目建立在开源社区的工作之上，改编、并在部分地方直接复用了以下项目。衷心感谢各位作者和贡献者：
+
+| 来源 | 用于 |
+|---|---|
+| [wanshuiyin/Auto-claude-code-research-in-sleep](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep) (ARIS) | research-review、paper-claim-audit、research-lit、novelty-check、experiment-plan、experiment-bridge、run-experiment、analyze-results、文献工具、codex-exec 评审桥 |
+| [HKUSTDial/Supervisor-Skills](https://github.com/HKUSTDial/Supervisor-Skills) | paper-writer、paper-polish、intro-drafter、deep-research、idea-evaluator、pre-submission-reviewer、figure-designer、rebuttal-guidance 等写作类技能 |
+| [Yuan1z0825/nature-skills](https://github.com/Yuan1z0825/nature-skills) | nature-figure、nature-reader、nature-ref-verifier、nature-response |
+| [andrehuang/research-companion](https://github.com/andrehuang/research-companion) | research-companion 及 brainstormer、idea-critic、research-strategist 三个代理 |
+| [Orchestra-Research/AI-Research-SKILLs](https://github.com/Orchestra-Research/AI-Research-SKILLs) | brainstorming-research-ideas、creative-thinking-for-research |
+| [Spark-To-Paper-Skills/spark-to-paper-skills](https://github.com/Spark-To-Paper-Skills/spark-to-paper-skills) | ts-paper-plan、ts-paper-cite 及论文模板 |
+| [wanshuiyin/Anti-Autoresearch](https://github.com/wanshuiyin/Anti-Autoresearch) | 诚信预检的 4 个脚本、诚信地图依据的缺陷分类；README 版式 |
+| [wanshuiyin/HERO-Anti-OverDefense](https://github.com/wanshuiyin/HERO-Anti-OverDefense) | README 版式 |
+| [ShaishavMaisuria/research-paper-lifecycle-skills](https://github.com/ShaishavMaisuria/research-paper-lifecycle-skills) | select-venue |
+| [Rimagination/good-story](https://github.com/Rimagination/good-story) | good-story |
+| [EternalWavee/benchmark-research-skill](https://github.com/EternalWavee/benchmark-research-skill) | benchmark-research-skill |
+| [UKGovernmentBEIS/inspect_evals](https://github.com/UKGovernmentBEIS/inspect_evals) | 基准有效性检查清单 |
+| [aipoch/medical-research-skills](https://github.com/aipoch/medical-research-skills) | limitation-and-risk-writer |
+| [Airjiannan05/research-paper-workflow-skill](https://github.com/Airjiannan05/research-paper-workflow-skill) | 实验记录规范 |
+| [panbibliotekar/gaidet-declaration](https://github.com/panbibliotekar/gaidet-declaration) | AI 使用声明术语（ai-use-drafter） |
+| [blader/humanizer](https://github.com/blader/humanizer) | paper-polish、paper-writer 的去 AI 腔检查 |
+| [AIScientists-Dev/academic-humanizer](https://github.com/AIScientists-Dev/academic-humanizer) | paper-polish、paper-writer 的去 AI 腔检查 |
+| [acl-org/acl-style-files](https://github.com/acl-org/acl-style-files) | ACL LaTeX 样式文件 |
+| [anthropics/knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins) | 选题方法的思路（未复制原文） |
+| [joshzyj/open-scholar-skill](https://github.com/joshzyj/open-scholar-skill) | 范文知识库的思路（未复制原文） |
+
+选题方法部分还参考了 Fischbach, *Cell* 2024（[doi:10.1016/j.cell.2024.03.012](https://doi.org/10.1016/j.cell.2024.03.012)）。各组件保留原有声明，版本与许可证见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)。如有遗漏或标注不准，请告诉我，我会马上改正。
+
+## 🙋 欢迎批评指正
+
+我在科研和工程上都还是小白，这是第一次做这样的系统，错误和不完善之处一定不少，恳请各位大佬批评指正。非常欢迎提 [Issue](../../issues) 和 [PR](../../pulls)，大小都行：报 bug、指出规则错误、文档不清楚、更好的思路都可以。
 
 ## ⚖️ 许可证
 

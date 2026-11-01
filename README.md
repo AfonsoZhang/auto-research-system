@@ -190,11 +190,36 @@ The system is built so that speed never comes from those shortcuts.
 
 ## 🧬 Acknowledgements
 
-Several skills are adapted from open projects, including ARIS,
-Supervisor-Skills, nature-skills, research-companion and AI-Research-SKILLs; the
-integrity pre-check uses four MIT-licensed scripts from Anti-Autoresearch,
-slightly modified. Each keeps its original notice; the full list with versions
-and licenses is in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+This project stands on the work of the open-source community. It adapts, and in places directly reuses, the following projects. Sincere thanks to all their authors and contributors:
+
+| Source | Used for |
+|---|---|
+| [wanshuiyin/Auto-claude-code-research-in-sleep](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep) (ARIS) | research-review, paper-claim-audit, research-lit, novelty-check, experiment-plan, experiment-bridge, run-experiment, analyze-results, literature tools, codex-exec bridge |
+| [HKUSTDial/Supervisor-Skills](https://github.com/HKUSTDial/Supervisor-Skills) | paper-writer, paper-polish, intro-drafter, deep-research, idea-evaluator, pre-submission-reviewer, figure-designer, rebuttal-guidance and other writing skills |
+| [Yuan1z0825/nature-skills](https://github.com/Yuan1z0825/nature-skills) | nature-figure, nature-reader, nature-ref-verifier, nature-response |
+| [andrehuang/research-companion](https://github.com/andrehuang/research-companion) | research-companion and the brainstormer, idea-critic, research-strategist agents |
+| [Orchestra-Research/AI-Research-SKILLs](https://github.com/Orchestra-Research/AI-Research-SKILLs) | brainstorming-research-ideas, creative-thinking-for-research |
+| [Spark-To-Paper-Skills/spark-to-paper-skills](https://github.com/Spark-To-Paper-Skills/spark-to-paper-skills) | ts-paper-plan, ts-paper-cite and paper templates |
+| [wanshuiyin/Anti-Autoresearch](https://github.com/wanshuiyin/Anti-Autoresearch) | the four integrity pre-check scripts and the defect taxonomy behind the integrity map; README layout |
+| [wanshuiyin/HERO-Anti-OverDefense](https://github.com/wanshuiyin/HERO-Anti-OverDefense) | README layout |
+| [ShaishavMaisuria/research-paper-lifecycle-skills](https://github.com/ShaishavMaisuria/research-paper-lifecycle-skills) | select-venue |
+| [Rimagination/good-story](https://github.com/Rimagination/good-story) | good-story |
+| [EternalWavee/benchmark-research-skill](https://github.com/EternalWavee/benchmark-research-skill) | benchmark-research-skill |
+| [UKGovernmentBEIS/inspect_evals](https://github.com/UKGovernmentBEIS/inspect_evals) | benchmark validity checklist |
+| [aipoch/medical-research-skills](https://github.com/aipoch/medical-research-skills) | limitation-and-risk-writer |
+| [Airjiannan05/research-paper-workflow-skill](https://github.com/Airjiannan05/research-paper-workflow-skill) | experiment-record conventions |
+| [panbibliotekar/gaidet-declaration](https://github.com/panbibliotekar/gaidet-declaration) | AI-use disclosure terms (ai-use-drafter) |
+| [blader/humanizer](https://github.com/blader/humanizer) | prose checks in paper-polish and paper-writer |
+| [AIScientists-Dev/academic-humanizer](https://github.com/AIScientists-Dev/academic-humanizer) | prose checks in paper-polish and paper-writer |
+| [acl-org/acl-style-files](https://github.com/acl-org/acl-style-files) | ACL LaTeX style files |
+| [anthropics/knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins) | ideas for problem selection (no text copied) |
+| [joshzyj/open-scholar-skill](https://github.com/joshzyj/open-scholar-skill) | the idea of an exemplar knowledge base (no text copied) |
+
+The problem-selection notes also draw on Fischbach, *Cell* 2024 ([doi:10.1016/j.cell.2024.03.012](https://doi.org/10.1016/j.cell.2024.03.012)). Every component keeps its original notice; revisions and licenses are listed in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). If I have missed or misattributed anything, please tell me and I will fix it right away.
+
+## 🙋 Feedback welcome
+
+I am a beginner in both research and engineering, and this is my first attempt at a system like this, so there are surely mistakes and rough edges. Criticism and corrections from more experienced people are very welcome. [Issues](../../issues) and [pull requests](../../pulls) of any size are appreciated: bug reports, wrong rules, unclear docs, better ideas.
 
 ## ⚖️ License
 
