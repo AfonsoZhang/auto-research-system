@@ -82,5 +82,20 @@ class ResearchAutoEntrypoint(unittest.TestCase):
         self.assertTrue(target.resolve().exists())
 
 
+class ResearchAutopilotEntrypoint(unittest.TestCase):
+    def test_command_exists_and_links_resolve(self):
+        cmd_dir = ROOT / '.claude/commands'
+        text = (cmd_dir / 'research-autopilot.md').read_text()
+        self.assertIn('disable-model-invocation: true', text)
+        for marker in ('AWAITING_TOPIC_APPROVAL', 'AWAITING_RESOURCE', 'research-auto.md',
+                       'references/decision-cards.md', 'SKILL.md#post-topic-autopilot'):
+            self.assertIn(marker, text)
+        for rel in ('research-auto.md', '../skills/research-agent-team/SKILL.md',
+                    '../skills/research-agent-team/references/decision-cards.md'):
+            self.assertTrue((cmd_dir / rel).resolve().exists(), rel)
+        skill = (ROOT / '.claude/skills/research-agent-team/SKILL.md').read_text()
+        self.assertIn('## Post-topic autopilot', skill)
+
+
 if __name__ == '__main__':
     unittest.main()
