@@ -105,6 +105,17 @@ The user's explicit invocation activates automatic mode for this task. Follow th
 existing full-flow rules and stop for explicit human approval after topic selection.
 ''')
     emit(dest / 'research-auto/agents/openai.yaml', 'policy:\n  allow_implicit_invocation: false\n')
+    emit(dest / 'research-autopilot/SKILL.md', '''---
+name: research-autopilot
+description: Explicitly activate post-topic autopilot for this task; after topic approval the agent decides all research choices and asks the user only for missing resources.
+---
+Read ../shared-references/codex-host.md and ../research-agent-team/SKILL.md.
+The user's explicit invocation activates automatic mode in its post-topic autopilot
+variant for this task. Follow the controller's "Post-topic autopilot" rules: stop for
+explicit human approval after topic selection, then decide research choices yourself
+and request missing resources from the user as soon as they arise.
+''')
+    emit(dest / 'research-autopilot/agents/openai.yaml', 'policy:\n  allow_implicit_invocation: false\n')
     for rel in owned - outputs:
         path = root / rel
         if path.is_relative_to(dest) and (path.is_file() or path.is_symlink()):
