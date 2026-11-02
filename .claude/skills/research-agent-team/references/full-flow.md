@@ -160,6 +160,9 @@ adjusting them, while respecting explicit budget and authority boundaries.
 - **Waiting for a real dependency:** permission, data, resources or external feedback
   remain unavailable. Finish independent work and record the recovery point and missing
   input. An unanswered ordinary clarification card alone does not establish this state.
+  In post-topic autopilot, request the missing resource from the user when it arises
+  and record `AWAITING_RESOURCE`; see the controller's
+  [autopilot rules](../SKILL.md#post-topic-autopilot).
 
 Before ending a full-workflow turn, identify each stopping reason's scope, blocked
 stages and independent required work. Continue such work when possible. Otherwise

@@ -37,6 +37,7 @@ straight to the relevant skill without loading this controller.
 |---|---|---|
 | On demand | A requested stage assessment, coordination task or explicit controller call without activation of automatic mode | Complete the requested work and necessary verification, including any explicitly requested span of stages, then deliver. Future-stage recommendations do not authorize execution. Do not activate the root team or automatic card selection. |
 | Automatic mode | The user explicitly enables automatic mode for this task | Follow applicable stages to the agreed endpoint, respecting the mandatory post-selection human checkpoint. Delegate roles, handle other authorized cards and accept artifacts. Budget, pilot and real-dependency stop conditions remain effective. |
+| Post-topic autopilot | The user explicitly enables it for this task (`/research-autopilot`) | Automatic mode plus the [autopilot rules](#post-topic-autopilot): after topic approval the main agent makes all research decisions itself and requests missing resources from the user at once instead of stopping. |
 
 Reading or editing this skill, entering the directory, high reasoning effort,
 an unanswered message, an existing plan or tracker, a `/loop` or scheduled task,
@@ -199,6 +200,38 @@ unfinished items when they apply; do not claim full completion. Distinguish pref
 failures, scientific outcomes and project completion under full-flow's ending conditions.
 A format or execution failure does not reject the whole study. Finish at the requested
 endpoint without expanding the objective. Standalone revision entrypoints retain their scope.
+
+## Post-topic autopilot
+
+A variant of automatic mode, activated only by its explicit entrypoint for this task.
+All automatic-mode rules apply except the two changes below.
+
+- **Topic approval is unchanged** and is the only research decision left to the user.
+  Without an approved topic, select one, report it and wait. Replacing the approved
+  question or contribution type is a new topic that needs a new report and approval.
+- **Research decisions are delegated.** After approval the main agent decides without
+  asking: protocol and design choices, branch cuts, follow-ups after inconclusive
+  evidence, pivots within the approved topic after a scientific stop, and material
+  changes to the central claim or paper direction that stay within that topic. Record
+  each consequential decision under the [decision-card policy](references/decision-cards.md)
+  with its evidence, alternatives and `decision_source: "main_agent (autopilot)"`, and
+  list these decisions in the final report. Delegation does not relax evidence: a
+  changed claim still needs the scientific acceptance checks and
+  [claim preservation](../shared-references/claim-preservation.md).
+- **Missing resources are requested at once.** When work needs a resource or authority
+  the task does not have (budget beyond the agreed cap, paid services, rented compute,
+  data or system access, credentials), immediately post a Chinese `资源请求` block
+  stating what is needed, why, the amount or cost, what it unblocks and the fallback if
+  refused. Record `AWAITING_RESOURCE` with the request in the tracker and continue all
+  independent work, including fallback paths that need no new authority. Check for a
+  user reply before starting dependent work. When only blocked work remains, ask with
+  AskUserQuestion, one question per resource, and wait; this is the only point where
+  autopilot blocks after topic approval. A granted resource resumes the blocked branch;
+  a refusal is a decided constraint, so continue on the fallback.
+
+Outward-facing actions remain with the user as in the shared
+[human decision points](../shared-references/research-autonomy.md#human-participation-at-consequential-decisions);
+deliver the materials and list the pending actions rather than requesting them mid-run.
 
 ## Assignment and management
 

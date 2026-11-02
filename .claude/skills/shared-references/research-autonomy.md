@@ -125,6 +125,13 @@ downstream work, including in automatic mode; the main agent
 cannot approve it. A decision needing new authorization stays with the user; elapsed time
 cannot supply that authorization.
 
+In post-topic autopilot (explicitly activated for the task), the user delegates
+the choices in the third bullet above that stay within the approved topic; the
+main agent decides and records them. Resource and access needs in the second
+bullet are requested from the user as soon as they arise rather than stopping
+work, under the controller's
+[autopilot rules](../research-agent-team/SKILL.md#post-topic-autopilot).
+
 Routine planning, hypothesis generation, protocol implementation, debugging,
 scheduled comparisons and already-budgeted follow-ups proceed within the current
 task. Apply agreed pilot stops without asking again. The main agent owns routine

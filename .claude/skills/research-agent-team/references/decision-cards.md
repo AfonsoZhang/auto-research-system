@@ -8,7 +8,7 @@ For a material delegated choice, record in the existing task record:
 - The question and feasible options (normally two or three).
 - The selected option and the evidence and rationale supporting it.
 - Relevant uncertainty, authorization, budget and affected downstream work.
-- Decision source (`main_agent` or `user`) and the actual outcome when known.
+- Decision source (`main_agent`, `main_agent (autopilot)` or `user`) and the actual outcome when known.
 
 Do not invent calibrated probabilities, success rates or model confidence scores.
 Inspect original artifacts; a recommendation is neither research evidence nor an
@@ -24,6 +24,12 @@ work. If using a structured card, mark `decision_kind: "topic_approval"` and
 `delegated: false`, with no automatic default. Existing approval for the same topic
 and scope remains valid. New authority and final academic commitments stay with
 the user; silence or a timeout cannot authorize them.
+
+In post-topic autopilot, the main agent also decides material claim or direction
+changes within the approved topic; record them with
+`decision_source: "main_agent (autopilot)"`. Resource requests are not cards for
+automatic selection: follow the controller's
+[autopilot rules](../SKILL.md#post-topic-autopilot).
 
 User replies override unfinished decisions. Record work already executed accurately.
 In on-demand mode, finish the requested scope; these rules do not activate automatic

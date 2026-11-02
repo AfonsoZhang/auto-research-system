@@ -15,7 +15,9 @@
   the current request. Existing specialist skills remain directly callable.
 - **Automatic mode.** Enable team assignments, authorized card selection and continuous
   execution only when the user explicitly activates automatic mode for this task
-  (typing `/research-auto` counts as explicit activation).
+  (typing `/research-auto` counts as explicit activation). `/research-autopilot` activates the post-topic
+  autopilot variant: after topic approval the agent makes all research decisions and asks
+  the user only for missing resources.
   The controller defines completion and stopping conditions. Discussing or editing it,
   entering the directory, high reasoning effort, silence or past activation is not activation.
 - **Human checkpoint after topic selection.** After fresh selection or reselection,
