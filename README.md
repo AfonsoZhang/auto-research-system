@@ -179,6 +179,10 @@ The system is built so that speed never comes from those shortcuts.
   a task by typing `/research-auto [task and endpoint]`. The main agent directly selects and executes ordinary authorized
   choices, recording evidence and rationale. Topic approval and new authority
   remain with the user; independent external review is unchanged.
+- **Post-topic autopilot** (`/research-autopilot [task and endpoint]`): automatic mode
+  where, once you approve the topic, the agent makes every research decision itself
+  (including pivots and claim changes within the topic) and only asks you, as soon
+  as the need arises, for missing resources such as budget, compute, data or access.
 
 ---
 
@@ -252,7 +256,7 @@ automatic mode for the current task. `AGENTS.md` routes Codex, and
 `python3 scripts/build_codex.py` regenerates `.agents/skills/` from the Claude
 sources plus the [host contract](config/codex/host.md). Do not edit generated files.
 The source currently contains 37 loadable skills; the
-Codex view preserves all of them and adds the missing `research-auto` entrypoint.
+Codex view preserves all of them and adds the missing `research-auto` and `research-autopilot` entrypoints.
 
 The read-only Claude bridge requires an authenticated Claude CLI with print JSON,
 effort selection, tool restriction and strict MCP configuration support. Configure

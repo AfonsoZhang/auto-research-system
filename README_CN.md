@@ -152,6 +152,8 @@ claude
   允许继续。
 - **自动模式**只有你为某个任务明确开启（输入 `/research-auto [任务与终点]`）时才跑完整流程。主 agent 直接推荐并执行已有授权内的常规选择，记录依据和理由。
   选题批准和新增授权仍由你决定，独立外审保留。
+- **选题后全自动**（输入 `/research-autopilot [任务与终点]`）：选题经你批准后，研究上的决定（含题内转向、改论点）全部由 agent 自定；
+  只有缺预算、算力、数据、权限等资源时才立刻向你汇报索要，其余工作不停。
 
 ---
 
@@ -222,7 +224,7 @@ codex
 `$research-review`；明确输入 `$research-auto` 才开启当前任务的自动模式。
 `AGENTS.md` 是 Codex 入口，`.agents/skills/` 是生成目录；更新原技能后运行
 `python3 scripts/build_codex.py`，不要直接编辑生成文件。原有 37 个可加载技能
-全部保留，另补齐 `research-auto` 入口。
+全部保留，另补齐 `research-auto` 和 `research-autopilot` 入口。
 
 Claude 审查需要已登录的 Claude CLI，并支持 `--print --output-format json`、
 `--effort`、`--tools` 和 `--strict-mcp-config` 等参数。配置写在
